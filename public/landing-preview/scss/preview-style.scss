@@ -1,0 +1,240 @@
+
+$main_color: #fd5b38;
+$main_color2: #caff33;
+$body_color: #fff;
+$sub_bg: #121212;
+$sub_bg2: #000;
+$main_bg: #0f0f0f;
+$mobile-xs-screen: 480px;
+$tablet-sm-screen: 768px;
+$desk-md-screen: 992px;
+$desk-lg-screen: 1300px;
+
+
+/* ====================== [ Custom Preview Styles  ] ====================== */
+
+main{
+    background: #181818;
+}
+
+.pre-header{
+    padding: 180px 0 40px;
+    position: relative;
+
+    h1{
+        font-weight: 600;
+        
+        span{
+            display: inline;
+        }
+    }
+
+    h2{
+        font-size: 280px;
+        font-weight: 800;
+        line-height: 1;
+        color: transparent;
+        -webkit-text-stroke: 2px #fff;
+        opacity: .2;
+        position: relative;
+    }
+
+    .img-header{
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background-size: contain;
+        background-position: right;
+        pointer-events: none;
+        z-index: 8;
+    }
+}
+
+
+.demos{
+    position: relative;
+    z-index: 8;
+
+    h2{
+
+        span{
+            font-size: 100px;
+            font-weight: 800;
+            color: transparent;
+            -webkit-text-stroke: 2px $main_color;
+            transform: translateY(10px);
+        }
+    }
+
+    .container,
+    .container-xxl{
+        position: relative;
+        margin-top: -100px;
+        padding: 120px 80px;
+        z-index: 6;
+        
+
+        .bord{
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid #fff;
+            pointer-events: none;
+            opacity: .1;
+            z-index: 3;
+        }
+    }
+
+    .item{
+        position: relative;
+
+        .img{
+            border: 1px solid rgba(255,255,255,.05);
+            overflow: hidden;
+        }
+
+        a{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+.pages{
+    position: relative;
+
+	&:after{
+        content: '';
+        position: absolute;
+        bottom: -50vw;
+        left: 0;
+        width: 100vw;
+        height: 100vw;
+        background: radial-gradient(circle, #ff3700 0%, transparent 66%);
+        opacity: .2;
+        z-index: -1;
+    }
+
+    .marq-pages{
+        transform: rotate(-10deg);
+
+        .main-marq{
+
+            &:after{
+                display: none;
+            }
+
+            .box .item{
+                padding: 0 15px;
+            }
+        }
+
+        .img{
+            width: 500px;
+        }
+    }
+
+    .states{
+
+        .item{
+            padding-left: 40px;
+            margin-left: 40px;
+        }
+    }
+}
+
+.respo{
+
+    .img{
+        width: 130%;
+        margin-left: -30%;
+    }
+}
+
+.main-img {
+    height: 75vh;
+    padding: 80px 0;
+
+    .main-marq:after{
+        display: none;
+    }
+}
+
+.feat-sec{
+
+    .item{
+        border: 1px solid rgba(255,255,255,.05);
+        padding: 50px 5px;
+
+        .sub-title{
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+    }
+
+    .box1{
+        border-radius: 70px 70px 0 70px;
+    }
+
+    .box2{
+        border-radius: 70px 70px 0 0;
+    }
+
+    .box3{
+        border-radius: 70px 70px 70px 0;
+    }
+
+    .box4{
+        border-radius: 70px 0 70px 70px;
+    }
+
+    .box5{
+        border-radius: 0 0 70px 70px;
+    }
+
+    .box6{
+        border-radius: 0 70px 70px 70px;
+    }
+}
+
+
+footer{
+    position: relative;
+
+    .img-footer{
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        pointer-events: none;
+        z-index: 8;
+    }
+
+    h6{
+        display: inline-block;
+        padding: 7px 20px;
+        border-radius: 30px;
+        background: rgba(255,255,255,.05);
+        backdrop-filter: blur(10px);
+        position: relative;
+        z-index: 2;
+        transform: rotate(-5deg);
+    }
+
+    h2{
+        padding: 40px 50px;
+        background: radial-gradient(to top, rgba(255,255,255,.1), transparent);
+        backdrop-filter: blur(5px);
+        border-radius: 100px;
+        border: 1px solid rgba(255,255,255,.05);
+    }
+}

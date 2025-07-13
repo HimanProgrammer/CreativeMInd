@@ -1,0 +1,110 @@
+
+/* Hero
+-----------------------------------------------------------------*/
+
+.skills-box {
+
+	h6 {
+		font-size: 13px;
+		font-weight: 300;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		margin-bottom: 10px;
+	}
+
+	.skill-progress {
+		height: 25px;
+		border: 1px solid rgba(255,255,255,.2);
+		position: relative;
+
+		.progres {
+			position: absolute;
+			width: 10%;
+			top: 5px;
+            bottom: 5px;
+			left: 5px;
+			background: rgba(255,255,255,.1);
+			transition: all 1.5s;
+		}
+	}
+}
+
+.my-skills{
+	position: relative;
+	padding-bottom: 110px;
+
+	&:after{
+        content: '';
+        position: absolute;
+        bottom: -50vw;
+        left: 5vw;
+        width: 80vw;
+        height: 80vw;
+        background: radial-gradient(circle, #ff3700 0%, transparent 66%);
+        opacity: .3;
+        z-index: -1;
+    }
+
+    .item{
+        text-align: center;
+
+        .box-bord{
+            padding: 40px 15px;
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 100px;
+        }
+
+        .img{
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.05);
+
+            img{
+                width: 55px;
+            }
+        }
+
+        .value{
+            font-size: 30px;
+        }
+
+        h6{
+            margin-top: 25px;
+        }
+    }
+}
+
+.numbers-crev{
+	position: relative;
+
+	&:after{
+        content: '';
+        position: absolute;
+        bottom: -50vw;
+        left: 10vw;
+        width: 80vw;
+        height: 80vw;
+        background: radial-gradient(circle, #ff3700 0%, transparent 66%);
+        opacity: .3;
+        z-index: -1;
+    }
+
+	.item{
+
+		h3{
+			font-size: 100px;
+			font-weight: 800;
+			line-height: 1;
+			transform: translateY(20px);
+		}
+
+		h6{
+			padding-top: 30px;
+		}
+	}
+}
+
