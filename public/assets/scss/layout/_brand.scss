@@ -1,0 +1,26 @@
+
+/* Brands & Clients
+-----------------------------------------------------------------*/
+
+.clients-carso{
+
+    .img{
+        margin: auto;
+    }
+
+    &.in-circle{
+
+        .item{
+            width: 220px;
+            height: 220px;
+            line-height: 220px;
+            border: 1px solid rgba(225,255,255,.1);
+            border-radius: 50%;
+        }
+    }
+}
+
+  
+
+
+

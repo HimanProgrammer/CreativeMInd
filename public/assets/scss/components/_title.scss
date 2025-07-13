@@ -1,0 +1,81 @@
+
+/* Titles
+-----------------------------------------------------------------*/
+
+.sec-head{
+
+    h2{
+        
+        span{
+            background: -webkit-linear-gradient(#fff, #222);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+
+    .sub-title{
+
+        span{
+            white-space: nowrap;
+            font-weight: 600;
+        }
+    }
+
+    .thin{
+        margin-left: 30px;
+        width: 100%;
+        border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+}
+
+.sub-title{
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.title-bord{
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 20px 10px 40px;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 30px;
+    width: max-content;
+    position: relative;
+
+    &:after{
+        content: '';
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: $main_color;
+        position: absolute;
+        top: 50%;
+        left: 15px;
+        transform: translateY(-50%);
+    }
+}
+
+.sec-bottom{
+    position: relative;
+
+    &:after{
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        border-top: 1px solid rgba(255,255,255,.1);
+    }
+
+    .d-flex{
+        width: max-content;
+        margin: auto;
+        border: 1px solid rgba(255,255,255,.1);
+        padding: 10px 30px;
+        border-radius: 30px;
+        position: relative;
+        z-index: 3;
+    }
+}

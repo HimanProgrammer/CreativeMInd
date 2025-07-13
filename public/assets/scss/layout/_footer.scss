@@ -1,0 +1,78 @@
+
+/* Footer
+-----------------------------------------------------------------*/
+
+footer{
+
+    .subscribe-minimal{
+
+        .form-group{
+            position: relative;
+        }
+
+        input{
+            color: #fff;
+            background: transparent;
+            border-radius: 0;
+            border: 0;
+            border-bottom: 1px solid rgba(255,255,255,.1);
+            width: 100%;
+            padding: 15px 0;
+
+            &:focus{
+                border-color: rgba(255,255,255,.5);
+            }
+        }
+
+        button{
+            color: #fff;
+            padding: 15px 0;
+            position: absolute;
+            top: 5px;
+            right: 0px;
+            background: transparent;
+            border: 0;
+        }
+
+        .social-icon{
+
+            a{
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                text-align: center;
+                border: 1px solid rgba(255,255,255,.1);
+                border-radius: 50%;
+            }
+        }
+    }
+}
+
+footer{
+
+    &.clean-footer{
+
+        &.crev{
+            position: relative;
+
+            &:after{
+                content: '';
+                background: linear-gradient(to top, rgba(255,255,255,.01), transparent);
+                backdrop-filter: blur(100px);
+                position: absolute;
+                top: 0;
+                left: 40px;
+                bottom: 40px;
+                right: 40px;
+            }
+
+            .circle-blur{
+                position: absolute;
+                bottom: -50px;
+                right: 50px;
+                width: 400px;
+                z-index: -1;
+            }
+        }
+    }
+}
