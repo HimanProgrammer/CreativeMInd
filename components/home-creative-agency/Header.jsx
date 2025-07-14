@@ -26,7 +26,7 @@ function Header() {
             <div className="caption mb-100">
               <div className="row">
                 <div className="col-lg-8">
-                  <h1 className="text-u">Webfolio</h1>
+                  <img src="/assets/imgs/logo-light-03.png" alt="" className="img-fluid" />
                   <h1 className="text-u">Full services</h1>
                 </div>
                 <div className="col-lg-4 d-flex justify-content-end">

@@ -31,7 +31,7 @@ function Intro() {
               <div className="skills-box row mt-80">
                 <div className="col-md-6">
                   <div className="skill-item sm-mb30">
-                    <h5 className="sub-title mb-15">UI / UX Design 90%</h5>
+                    <h5 className="sub-title mb-15">Graphic Design  90%</h5>
                     <div className="skill-progress">
                       <div className="progres" data-value="90%"></div>
                     </div>
@@ -39,13 +39,32 @@ function Intro() {
                 </div>
                 <div className="col-md-6">
                   <div className="skill-item">
-                    <h5 className="sub-title mb-15">Development 80%</h5>
+                    <h5 className="sub-title mb-15">Web Development 80%</h5>
                     <div className="skill-progress">
                       <div className="progres" data-value="80%"></div>
                     </div>
                   </div>
                 </div>
               </div>
+              <div className="skills-box row mt-80">
+                <div className="col-md-6">
+                  <div className="skill-item sm-mb30">
+                    <h5 className="sub-title mb-15">UI / UX Design 80%</h5>
+                    <div className="skill-progress">
+                      <div className="progres" data-value="80%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="skill-item">
+                    <h5 className="sub-title mb-15">App Design Development 60%</h5>
+                    <div className="skill-progress">
+                      <div className="progres" data-value="80%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
           <div className="col-lg-6">
