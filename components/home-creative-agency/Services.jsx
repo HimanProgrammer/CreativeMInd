@@ -21,7 +21,7 @@ function Services() {
         <div className="row sm-marg">
           {data.map((item, i) => (
             <div key={i} className="col-lg-3 col-md-6">
-              <div className="item-box radius-15 ">
+              <div className="item-box radius-15 mb-30 wow fadeInUp">
                 <h5 className="mb-80 text-u">
                   <span className="mr-40 fz-14 main-color">01</span>
                   {item.title}

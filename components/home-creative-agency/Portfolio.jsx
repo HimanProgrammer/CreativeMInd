@@ -23,7 +23,7 @@ function Portfolio() {
     },
   };
   return (
-    <section className="work-crev sub-bg">
+    <section className="work-crev ">
       <div className="container section-padding position-re">
         <div className="sec-head mb-80">
           <div className="d-flex align-items-center mb-30">
