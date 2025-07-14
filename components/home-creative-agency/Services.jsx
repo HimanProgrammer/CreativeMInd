@@ -21,14 +21,14 @@ function Services() {
         <div className="row sm-marg">
           {data.map((item, i) => (
             <div key={i} className="col-lg-3 col-md-6">
-              <div className="item-box radius-15 md-mb30">
+              <div className="item-box radius-15 ">
                 <h5 className="mb-80 text-u">
                   <span className="mr-40 fz-14 main-color">01</span>
                   {item.title}
                 </h5>
-                <div className="icon mb-20 opacity-5">
+                {/* <div className="icon mb-20 opacity-5">
                   <img src={item.img} alt="" />
-                </div>
+                </div> */}
                 <p>{item.desc.slice(0, 50)} </p>
               </div>
             </div>

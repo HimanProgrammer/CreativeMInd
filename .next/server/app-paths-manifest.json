@@ -1,7 +1,4 @@
 {
-  "/page": "app/page.js",
-  "/project-details/page": "app/project-details/page.js",
-  "/page-team-details/page": "app/page-team-details/page.js",
-  "/page-team/page": "app/page-team/page.js",
-  "/page-services-details/page": "app/page-services-details/page.js"
+  "/not-found": "app/not-found.js",
+  "/page": "app/page.js"
 }

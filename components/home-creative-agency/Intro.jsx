@@ -17,7 +17,7 @@ function Intro() {
     return () => window.removeEventListener('scroll', handleShowProgressValues);
   }, []);
   return (
-    <section className="intro-skill section-padding pt-0">
+    <section className="intro-skill section-padding  ">
       <div className="container pt-80 pb-80">
         <div className="row md-marg">
           <div className="col-lg-6">
@@ -68,7 +68,7 @@ function Intro() {
             </div>
           </div>
           <div className="col-lg-6">
-            <div className="imgs">
+            <div className="imgs mt-120">
               <div className="img1">
                 <img src="/assets/imgs/intro/2.jpg" alt="" />
               </div>
