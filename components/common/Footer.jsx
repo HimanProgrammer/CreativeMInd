@@ -80,10 +80,10 @@ function Footer() {
         <div className="pt-30 pb-30 mt-80 bord-thin-top">
           <div className="text-center">
             <p className="fz-14">
-              © 2024 Webfolio is Proudly Powered by{' '}
+              © 2025 CreativeMind is Proudly Powered by{' '}
               <span className="underline main-color">
                 <a href="https://themeforest.net/user/UiCamp" target="_blank">
-                  UiCamp
+                  CreativeMind
                 </a>
               </span>
             </p>
