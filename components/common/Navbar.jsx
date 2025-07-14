@@ -66,7 +66,7 @@ function Navbar() {
           id="navbarSupportedContent"
         >
           <ul className="navbar-nav">
-            <li
+            {/* <li
               onMouseLeave={handleDropdownMouseLeave}
               onMouseMove={handleDropdownMouseMove}
               className="nav-item dropdown"
@@ -136,7 +136,44 @@ function Navbar() {
                   </div>
                 </div>
               </div>
+            </li> */}
+            <li className="nav-item">
+              <a className="nav-link" href="/">
+                <span className="rolling-text">Home</span>
+              </a>
+            </li> 
+            <li className="nav-item">
+              <a className="nav-link" href="/">
+                <span className="rolling-text">About Us</span>
+              </a>
+            </li> 
+ 
+            <li
+              onMouseLeave={handleDropdownMouseLeave}
+              onMouseMove={handleDropdownMouseMove}
+              className="nav-item dropdown"
+            >
+              <a
+                className="nav-link dropdown-toggle"
+                data-toggle="dropdown"
+                href="#"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <span className="rolling-text">Services</span>
+              </a>
+              <div className="dropdown-menu">
+                <a className="dropdown-item" href="/page-services">
+                  Services 
+                </a>
+                <a className="dropdown-item" href="/page-services-details">
+                  Services Details
+                </a>
+              </div>
             </li>
+
+
             <li
               onMouseLeave={handleDropdownMouseLeave}
               onMouseMove={handleDropdownMouseMove}
@@ -264,6 +301,7 @@ function Navbar() {
                 </a>
               </div>
             </li>
+        
             <li className="nav-item">
               <a className="nav-link" href="/page-contact">
                 <span className="rolling-text">Contact Us</span>
