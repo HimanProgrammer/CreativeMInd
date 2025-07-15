@@ -12,10 +12,11 @@ import Intro from '@/components/home-creative-agency/Intro';
 import Numbers from '@/components/home-creative-agency/Numbers';
 import Portfolio from '@/components/home-creative-agency/Portfolio';
 import Intro2 from '@/components/home-creative-agency/Intro2';
-import Testimonials from '@/components/home-creative-agency/Testimonials'; 
+import Testimonials from '@/components/home-creative-agency/Testimonials';
 import Clients from '@/components/common/Clients';
-import Blog from '@/components/home-creative-agency/Blog'; 
+import Blog from '@/components/home-creative-agency/Blog';
 import Marq2 from '@/components/common/Marq2';
+
 export const metadata = {
   title: 'CreativeMind',
   icons: {
@@ -34,11 +35,15 @@ export const metadata = {
 export default function Home() {
   return (
     <body>
+      {/* Preloader & Effects */}
       <LoadingScreen />
       <Cursor />
       <ProgressScroll />
       <Lines />
+
+      {/* Navbar */}
       <Navbar />
+
       <div id="smooth-wrapper">
         <div id="smooth-content">
           <main>
@@ -55,45 +60,37 @@ export default function Home() {
           <Footer />
         </div>
       </div>
+
+      {/* Local Scripts */}
+      <Script src="/assets/js/ScrollTrigger.min.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/ScrollSmoother.min.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/plugins.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/TweenMax.min.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/charming.min.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/countdown.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/gsap.min.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/splitting.min.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/isotope.pkgd.min.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/imgReveal/imagesloaded.pkgd.min.js" strategy="beforeInteractive" />
+      <Script src="/assets/js/scripts.js" strategy="afterInteractive" />
+
+      {/* ✅ Google Analytics 4 Tag */}
       <Script
-        src="/assets/js/ScrollTrigger.min.js"
-        strategy="beforeInteractive"
+        strategy="afterInteractive"
+        src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
       />
       <Script
-        src="/assets/js/ScrollSmoother.min.js"
-        strategy="beforeInteractive"
+        id="google-analytics"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XXXXXXXXXX');
+          `,
+        }}
       />
-      <Script strategy="beforeInteractive" src="/assets/js/plugins.js"></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/TweenMax.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/charming.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/countdown.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/gsap.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/splitting.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/isotope.pkgd.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/imgReveal/imagesloaded.pkgd.min.js"
-      ></Script>
-      {/* {/* <Script src="/assets/js/smoother-script.js" strategy="lazyOnload" /> */}{' '}
-      <Script src="/assets/js/scripts.js"></Script>
     </body>
   );
 }
