@@ -24,13 +24,12 @@ function Intro() {
             <div className="cont">
               <h3 className="mb-30">
                 CreativeMind is a visionary {' '}
-                <span className="fw-200">creative design studio</span> crafting 
-                impactful brands, <span className="fw-200">stunning visuals, and</span> 
-                <span className="fw-200">seamless digital experiences.</span> 
+                <span className="fw-200">creative design studio</span> crafting impactful brands, 
+                <span className="fw-200">stunning visuals</span> and <span className="fw-200">seamless digital experiences.</span> 
 
               </h3>
               <p>
-                CreativeMind delivers end-to-end design solutions rooted in experience strategy — helping you build standout brands 
+                It delivers end-to-end design solutions rooted in experience strategy helping you build standout brands 
                 and launch online stores your customers love to shop. From logos to full-scale websites, we blend creativity with 
                 functionality to elevate your business.Lets turn your ideas into digital experiences that captivate and convert.
               </p>
