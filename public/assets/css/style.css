@@ -6242,175 +6242,133 @@ footer.clean-footer.crev .circle-blur {
 
 /* Services
 -----------------------------------------------------------------*/
-.services .item-box {
-  padding: 60px 40px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 15px;
+/* === Global Reset for Box Sizing === */
+* {
+  box-sizing: border-box;
 }
 
-.services .item-box .icon {
-  width: 80px;
-}
-
-.services .swiper-container {
-  overflow: visible;
-}
-
-.services-crev .item-box {
-  padding: 60px 40px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.services-crev .item-box h5 span {
+/* === Services Modern === */
+.services-modern {
   position: relative;
-  top: -5px;
+  padding: 80px 0;
+  background-color: #0b0b0b;
 }
 
-.services-crev .item-box .icon {
-  width: 60px;
-}
-
-.services-inline {
-  position: relative;
-}
-
-.services-inline .circle-blur {
-  position: absolute;
-  bottom: 50px;
-  left: -20%;
-  width: 30%;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-  -webkit-filter: blur(50px);
-  filter: blur(50px);
-  z-index: -1;
-}
-
-.services-inline .item {
-  padding: 30px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.services-inline .item:first-of-type {
-  padding-top: 0;
-}
-
-.services-inline .item .num {
-  width: 45px;
-  height: 45px;
-  line-height: 45px;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  margin-right: 30px;
-  font-size: 13px;
+.services-modern .sec-head h6,
+.services-modern .sec-head h4 {
+  color: #fff;
 }
 
 .services-modern .serv-boxs {
-  display: -webkit-box;
-  display: -ms-flexbox;
+  position: relative;
+}
+
+.services-modern .swiper-slide {
   display: flex;
+  justify-content: center;
 }
 
 .services-modern .item {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 40px 30px;
-  width: 350px;
+  width: 100%;
+  max-width: 350px;
   height: 450px;
-  margin: 0 4px;
-  display: -webkit-box;
-  display: -ms-flexbox;
+  padding: 40px 30px;
+  margin: auto;
+  background-color: #121212;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
   flex-direction: column;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
   justify-content: space-between;
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  transition: all 0.4s;
+  transition: all 0.4s ease;
+  color: #fff;
 }
 
+/* On Active (Click) */
 .services-modern .item.active {
-  width: calc(100vw - 350px * 3);
+  border-color: rgba(255, 255, 255, 0.3);
+  background-color: #1c1c1c;
+  transform: scale(1.03);
+  z-index: 2;
 }
 
+/* Icon Image Box */
+.services-modern .item .icon-img-60 {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 20px;
+}
+
+.services-modern .item .icon-img-60 img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Description Paragraph */
+.services-modern .item p {
+  font-size: 18px;
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateX(30px);
+  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  transition: all 0.5s ease;
+  margin-bottom: 30px;
+}
+
+/* Animate Paragraph on Active */
 .services-modern .item.active p {
-  -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  -webkit-transition-delay: 0.4s;
-  -o-transition-delay: 0.4s;
-  transition-delay: 0.4s;
   opacity: 1;
-  -webkit-transform: translate(0);
-  -ms-transform: translate(0);
-  transform: translate(0);
+  transform: translateX(0);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 }
 
-.services-modern .item h6 {
-  font-size: 14px !important;
-  font-weight: 400;
+/* Sub-title (Service Name) */
+.services-modern .item h6.sub-title {
+  font-size: 14px;
+  font-weight: 500;
   padding: 10px 20px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 30px;
-}
-
-.services-modern .item p {
-  font-size: 20px;
-  text-indent: 15%;
-  opacity: 0;
-  -webkit-transition: opacity 0.1s ease-out, -webkit-transform 0.4s ease-out,
-    -webkit-clip-path 0.6s cubic-bezier(0.25, 0.59, 0.29, 0.96);
-  transition: opacity 0.1s ease-out, -webkit-transform 0.4s ease-out,
-    -webkit-clip-path 0.6s cubic-bezier(0.25, 0.59, 0.29, 0.96);
-  -o-transition: opacity 0.1s ease-out, transform 0.4s ease-out,
-    clip-path 0.6s cubic-bezier(0.25, 0.59, 0.29, 0.96);
-  transition: opacity 0.1s ease-out, transform 0.4s ease-out,
-    clip-path 0.6s cubic-bezier(0.25, 0.59, 0.29, 0.96);
-  transition: opacity 0.1s ease-out, transform 0.4s ease-out,
-    clip-path 0.6s cubic-bezier(0.25, 0.59, 0.29, 0.96),
-    -webkit-transform 0.4s ease-out,
-    -webkit-clip-path 0.6s cubic-bezier(0.25, 0.59, 0.29, 0.96);
-  -webkit-clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-  -webkit-transform: translateX(50px);
-  -ms-transform: translateX(50px);
-  transform: translateX(50px);
-}
-
-.services-clas .item {
-  padding: 40px 30px;
-  border-radius: 15px;
-}
-
-.services-clas .item .tag {
-  font-size: 12px;
-  letter-spacing: 1px;
+  background-color: transparent;
   text-transform: uppercase;
-  padding: 5px 15px;
-  margin: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 30px;
+  letter-spacing: 1px;
 }
 
-.services-clas .item a {
-  width: 60px;
-  height: 60px;
-  line-height: 60px;
-  text-align: center;
-  background: #0f0f0f;
-  border-radius: 50%;
-  -webkit-transition: all 0.4s;
-  -o-transition: all 0.4s;
-  transition: all 0.4s;
+/* Number Tag */
+.services-modern .item span.fz-13 {
+  font-size: 13px;
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-.services-clas .item a:hover {
-  background: #fd5b38;
+/* Swiper Arrows Customization (Optional) */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #007aff;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px;
+}
+
+/* Responsive Breakpoints (Optional tweaks) */
+@media (max-width: 767px) {
+  .services-modern .item {
+    max-width: 90%;
+    height: auto;
+    padding: 30px 20px;
+  }
+
+  .services-modern .item p {
+    font-size: 16px;
+  }
+}
+.services-inline2 {
+  position: relative;
+  padding: 80px 0;
+  background-color: #0b0b0b;
 }
 
 .services-inline2 .item {
