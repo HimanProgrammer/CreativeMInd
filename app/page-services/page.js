@@ -16,7 +16,7 @@ import Header from '@/components/page-services/Header';
 import Numbers from '@/components/page-services/Numbers';
 
 export const metadata = {
-  title: 'webfolio',
+  title: 'Services - CreativeMind',
   icons: {
     icon: '/assets/imgs/favicon.ico',
     shortcut: '/assets/imgs/favicon.ico',
