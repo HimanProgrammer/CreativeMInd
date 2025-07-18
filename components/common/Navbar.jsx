@@ -143,7 +143,7 @@ function Navbar() {
               </a>
             </li> 
             <li className="nav-item">
-              <a className="nav-link" href="/">
+              <a className="nav-link" href="/page-about">
                 <span className="rolling-text">About Us</span>
               </a>
             </li> 
@@ -279,14 +279,14 @@ function Navbar() {
               <a
                 className="nav-link dropdown-toggle"
                 data-toggle="dropdown"
-                href="#"
+                href="/blog-grid-3column"
                 role="button"
                 aria-haspopup="true"
                 aria-expanded="false"
               >
                 <span className="rolling-text">Blogs</span>
               </a>
-              <div className="dropdown-menu">
+              {/* <div className="dropdown-menu">
                 <a className="dropdown-item" href="/blog-classic">
                   Blog Standerd
                 </a>
@@ -299,7 +299,7 @@ function Navbar() {
                 <a className="dropdown-item" href="/blog-details">
                   Blog Details
                 </a>
-              </div>
+              </div> */}
             </li>
         
             <li className="nav-item">
