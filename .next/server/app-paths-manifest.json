@@ -1,5 +1,5 @@
 {
+  "/not-found": "app/not-found.js",
   "/page": "app/page.js",
-  "/blog-grid-sidebar/page": "app/blog-grid-sidebar/page.js",
-  "/blog-details/page": "app/blog-details/page.js"
+  "/page-services/page": "app/page-services/page.js"
 }
