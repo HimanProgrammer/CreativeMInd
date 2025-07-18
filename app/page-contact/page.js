@@ -11,7 +11,7 @@ import Contact from '@/components/page-contact/Contact';
 import Map from '@/components/page-contact/Map';
 
 export const metadata = {
-  title: 'webfolio',
+  title: 'Contact Us - CreativeMind',
   icons: {
     icon: '/assets/imgs/favicon.ico',
     shortcut: '/assets/imgs/favicon.ico',

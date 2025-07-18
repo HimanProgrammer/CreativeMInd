@@ -271,7 +271,7 @@ function Navbar() {
                 </a>
               </div>
             </li>
-            <li
+            {/* <li
               onMouseLeave={handleDropdownMouseLeave}
               onMouseMove={handleDropdownMouseMove}
               className="nav-item dropdown"
@@ -286,7 +286,7 @@ function Navbar() {
               >
                 <span className="rolling-text">Blogs</span>
               </a>
-              {/* <div className="dropdown-menu">
+              <div className="dropdown-menu">
                 <a className="dropdown-item" href="/blog-classic">
                   Blog Standerd
                 </a>
@@ -299,9 +299,14 @@ function Navbar() {
                 <a className="dropdown-item" href="/blog-details">
                   Blog Details
                 </a>
-              </div> */}
+              </div>
+            </li> */}
+            <li className="nav-item">
+              <a className="nav-link" href="/blog-grid-3column">
+                <span className="rolling-text">Blogs</span>
+              </a>
             </li>
-        
+
             <li className="nav-item">
               <a className="nav-link" href="/page-contact">
                 <span className="rolling-text">Contact Us</span>
