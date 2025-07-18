@@ -17,7 +17,7 @@ import Numbers from '@/components/page-about/Numbers';
 import Services from '@/components/page-about/Services';
 
 export const metadata = {
-  title: 'webfolio',
+  title: 'About Us - CreativeMind',
   icons: {
     icon: '/assets/imgs/favicon.ico',
     shortcut: '/assets/imgs/favicon.ico',

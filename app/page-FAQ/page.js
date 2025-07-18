@@ -15,7 +15,7 @@ import FAQS from '@/components/page-FAQ/FAQS';
 import Numbers from '@/components/page-FAQ/Numbers';
 
 export const metadata = {
-  title: 'webfolio',
+  title: 'FAQ - CreativeMind',
   icons: {
     icon: '/assets/imgs/favicon.ico',
     shortcut: '/assets/imgs/favicon.ico',
