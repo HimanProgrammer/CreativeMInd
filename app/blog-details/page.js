@@ -9,7 +9,7 @@ import Script from 'next/script';
 import Header from '@/components/blog-details/Header';
 import Blog from '@/components/blog-details/Blog';
 export const metadata = {
-  title: 'webfolio',
+  title: 'CreativeMind - Blog Details',
   icons: {
     icon: '/assets/imgs/favicon.ico',
     shortcut: '/assets/imgs/favicon.ico',
