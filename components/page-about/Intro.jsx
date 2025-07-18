@@ -23,16 +23,16 @@ function Intro() {
           <div className="col-lg-6 valign">
             <div className="cont">
               <h3 className="mb-30">
-                Wfolio is a full-service{' '}
-                <span className="fw-200">creative studio</span> creating
-                beautiful <span className="fw-200">digital experiences</span> &
-                products.
+                CreativeMind is a visionary {' '}
+                <span className="fw-200">creative design studio</span> crafting 
+                impactful brands, <span className="fw-200">stunning visuals, and</span> 
+                <span className="fw-200">seamless digital experiences.</span> 
+
               </h3>
               <p>
-                Our design services starts and ends with a best-in-class
-                experience strategy that builds brands. Open an online store and
-                become an international seller. Your customers will enjoy
-                shopping online!
+                CreativeMind delivers end-to-end design solutions rooted in experience strategy — helping you build standout brands 
+                and launch online stores your customers love to shop. From logos to full-scale websites, we blend creativity with 
+                functionality to elevate your business.Lets turn your ideas into digital experiences that captivate and convert.
               </p>
               <a href="/page-services" className="underline main-color mt-40">
                 <span className="text">
