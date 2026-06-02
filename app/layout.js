@@ -10,31 +10,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
 
-        {children}
-
-        {/* Google Ads / Analytics */}
-        <Script
-          strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=AW-17350106214"
-        />
-
-        <Script
-          id="google-analytics"
-          strategy="afterInteractive"
-        >
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'AW-17350106214');
-          `}
-        </Script>
-
-        {/* Facebook Meta Pixel */}
-        <Script
+      <head>
+         {/* Facebook Meta Pixel */}
+        <script
           id="facebook-pixel"
           strategy="afterInteractive"
         >
@@ -58,8 +37,34 @@ export default function RootLayout({ children }) {
             fbq('init', '1476825456779046');
             fbq('track', 'PageView');
           `}
+        </script>
+
+      </head>
+
+      <body>
+
+        {children}
+
+        {/* Google Ads / Analytics */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=AW-17350106214"
+        />
+
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+        >
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-17350106214');
+          `}
         </Script>
 
+        
       </body>
     </html>
   );
