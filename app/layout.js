@@ -10,45 +10,54 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-
       <head>
-         {/* Facebook Meta Pixel */}
-        <script
+        <Script
           id="facebook-pixel"
           strategy="afterInteractive"
         >
           {`
             !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;
-            n.push=n;
-            n.loaded=!0;
-            n.version='2.0';
-            n.queue=[];
-            t=b.createElement(e);
-            t.async=!0;
-            t.src=v;
-            s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}
-            (window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
+            {
+              if(f.fbq)return;
+              n=f.fbq=function(){
+                n.callMethod ?
+                n.callMethod.apply(n,arguments) :
+                n.queue.push(arguments);
+              };
+
+              if(!f._fbq)f._fbq=n;
+              n.push=n;
+              n.loaded=!0;
+              n.version='2.0';
+              n.queue=[];
+
+              t=b.createElement(e);
+              t.async=!0;
+              t.src=v;
+
+              s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s);
+
+            }(
+              window,
+              document,
+              'script',
+              'https://connect.facebook.net/en_US/fbevents.js'
+            );
 
             fbq('init', '1476825456779046');
             fbq('track', 'PageView');
           `}
-        </script>
-
+        </Script>
+        
       </head>
-
       <body>
-
         {children}
 
-        {/* Google Ads / Analytics */}
+        {/* Google Analytics 4 */}
         <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8REJ0M9YEX"
           strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=AW-17350106214"
         />
 
         <Script
@@ -58,12 +67,14 @@ export default function RootLayout({ children }) {
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
+            
             gtag('js', new Date());
 
-            gtag('config', 'AW-17350106214');
+            gtag('config', 'G-8REJ0M9YEX');
           `}
         </Script>
 
+        {/* Facebook Meta Pixel */}
         
       </body>
     </html>
