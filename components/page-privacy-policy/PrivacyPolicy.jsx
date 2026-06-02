@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
             </div>
 
             <div className="mb-50">
-              <h3 className="mb-20">9. Children's Privacy</h3>
+              <h3 className="mb-20">9. Children&#39;s Privacy</h3>
 
               <p>
                 Our services are not intended for children under the age of
