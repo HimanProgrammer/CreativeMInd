@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/authContext';
@@ -16,6 +16,13 @@ export default function AdminLogin() {
   const [forgotEmail, setForgotEmail] = useState('');
   const [resetSent, setResetSent] = useState(false);
   const { resetPassword } = useAuth();
+
+  // Detect if Firebase is configured — hide Google button if not
+  const firebaseConfigured = !!(process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
+  const [currentDomain, setCurrentDomain] = useState('');
+  useEffect(() => {
+    setCurrentDomain(window.location.hostname);
+  }, []);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -48,11 +55,11 @@ export default function AdminLogin() {
       router.push('/admin/dashboard');
     } catch (err) {
       if (err.code === 'auth/operation-not-allowed') {
-        setError('Google sign-in not enabled in Firebase Console. Use email login with password: admin123');
+        setError('Google sign-in is not enabled in Firebase Console. Use email login with password: admin123');
       } else if (err.code === 'auth/unauthorized-domain') {
-        setError('Add "localhost" to Firebase → Authentication → Settings → Authorized Domains. Or use email login with password: admin123');
+        setError(`Add "${currentDomain}" to Firebase → Authentication → Settings → Authorized Domains. Or use email + password: admin123`);
       } else if (err.code !== 'auth/popup-closed-by-user') {
-        setError(friendlyError(err.code) + ' (Use email login with password: admin123)');
+        setError(friendlyError(err.code) + ' — Or use password: admin123');
       }
     } finally {
       setGoogleLoading(false);
@@ -116,21 +123,31 @@ export default function AdminLogin() {
         <h2 style={s.title}>Welcome Back</h2>
         <p style={s.subtitle}>Sign in to CreativeMind Admin</p>
 
-        {/* Google Sign In */}
-        <button onClick={handleGoogleLogin} disabled={googleLoading} style={s.googleBtn}>
-          {googleLoading ? (
-            <span style={s.spinner} />
-          ) : (
-            <GoogleIcon />
-          )}
-          {googleLoading ? 'Signing in...' : 'Continue with Google'}
-        </button>
-
-        <div style={s.divider}>
-          <span style={s.dividerLine} />
-          <span style={s.dividerText}>or sign in with email</span>
-          <span style={s.dividerLine} />
-        </div>
+        {/* Google Sign In — only shown when Firebase is configured */}
+        {firebaseConfigured ? (
+          <>
+            <button onClick={handleGoogleLogin} disabled={googleLoading} style={s.googleBtn}>
+              {googleLoading ? <span style={s.spinner} /> : <GoogleIcon />}
+              {googleLoading ? 'Signing in...' : 'Continue with Google'}
+            </button>
+            <div style={s.divider}>
+              <span style={s.dividerLine} />
+              <span style={s.dividerText}>or sign in with email</span>
+              <span style={s.dividerLine} />
+            </div>
+          </>
+        ) : (
+          <div style={{
+            marginBottom: 20, padding: '10px 14px',
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: 10, textAlign: 'center',
+          }}>
+            <p style={{ color: '#555', fontSize: 12, margin: 0 }}>
+              🔒 Google login requires Firebase setup. Use email below.
+            </p>
+          </div>
+        )}
 
         {/* Email/Password Form */}
         <form onSubmit={handleLogin} style={s.form}>
@@ -207,6 +224,7 @@ function friendlyError(code) {
     'auth/user-disabled': 'This account has been disabled.',
     'auth/invalid-credential': 'Invalid email or password.',
     'auth/network-request-failed': 'Network error. Check your connection.',
+    'auth/not-configured': 'Firebase is not configured. Use password: admin123',
   };
   return map[code] || 'Something went wrong. Please try again.';
 }
