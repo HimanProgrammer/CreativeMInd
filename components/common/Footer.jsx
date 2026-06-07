@@ -1,4 +1,5 @@
 import React from 'react';
+import { SITE } from '@/lib/siteConfig';
 
 function Footer() {
   return (
@@ -13,14 +14,12 @@ function Footer() {
           <div className="col-lg-4">
             <div className="column md-mb50">
               <h6 className="sub-title mb-30">Contact</h6>
-              <h6 className="p-color fw-400">
-                5919 Trussville Crossings <br /> Pkwy, Birmingham
-              </h6>
+              <h6 className="p-color fw-400">{SITE.address}</h6>
               <h6 className="mt-30 mb-15">
-                <a href="#0">Hello@webfolio.com</a>
+                <a href={SITE.emailHref}>{SITE.email}</a>
               </h6>
-              <a href="#0" className="underline">
-                <span className="fz-22 main-color">+2 456 (343) 24 45</span>
+              <a href={SITE.phoneTel} className="underline">
+                <span className="fz-22 main-color">{SITE.phone}</span>
               </a>
             </div>
           </div>
@@ -28,22 +27,11 @@ function Footer() {
             <div className="column md-mb50">
               <h6 className="sub-title mb-30">Useful Links</h6>
               <ul className="rest fz-14 opacity-7">
-                <li className="mb-15">
-                  <a href="/page-about">About</a>
-                </li>
-                <li className="mb-15">
-                  <a href="/page-services">Services</a>
-                </li>
-                <li className="mb-15">
-                  <a href="/blog-grid-sidebar">Blog</a>
-                </li>
-                <li>
-                  <a href="/page-contact">Contact</a>
-                </li>
-                <li>
-                  <a href="/privacy-policy">Privacy Policy</a>
-                </li>
-
+                <li className="mb-15"><a href="/page-about">About</a></li>
+                <li className="mb-15"><a href="/page-services">Services</a></li>
+                <li className="mb-15"><a href="/blog-grid-sidebar">Blog</a></li>
+                <li className="mb-15"><a href="/page-contact">Contact</a></li>
+                <li><a href="/privacy-policy">Privacy Policy</a></li>
               </ul>
             </div>
           </div>
@@ -52,30 +40,20 @@ function Footer() {
               <h6 className="sub-title mb-30">Newsletter</h6>
               <div className="form-group mb-40">
                 <input type="text" name="subscrib" placeholder="Your Email" />
-                <button>
-                  <span className="ti-location-arrow"></span>
-                </button>
+                <button><span className="ti-location-arrow"></span></button>
               </div>
               <ul className="rest social-icon d-flex align-items-center">
                 <li className="hover-this cursor-pointer">
-                  <a href="#0" className="hover-anim">
-                    <i className="fab fa-facebook-f"></i>
-                  </a>
+                  <a href={SITE.social.facebook} className="hover-anim"><i className="fab fa-facebook-f"></i></a>
                 </li>
                 <li className="hover-this cursor-pointer ml-10">
-                  <a href="#0" className="hover-anim">
-                    <i className="fab fa-dribbble"></i>
-                  </a>
+                  <a href={SITE.social.dribbble} className="hover-anim"><i className="fab fa-dribbble"></i></a>
                 </li>
                 <li className="hover-this cursor-pointer ml-10">
-                  <a href="#0" className="hover-anim">
-                    <i className="fab fa-linkedin-in"></i>
-                  </a>
+                  <a href={SITE.social.linkedin} className="hover-anim"><i className="fab fa-linkedin-in"></i></a>
                 </li>
                 <li className="hover-this cursor-pointer ml-10">
-                  <a href="#0" className="hover-anim">
-                    <i className="fab fa-instagram"></i>
-                  </a>
+                  <a href={SITE.social.instagram} className="hover-anim"><i className="fab fa-instagram"></i></a>
                 </li>
               </ul>
             </div>
@@ -84,11 +62,9 @@ function Footer() {
         <div className="pt-30 pb-30 mt-80 bord-thin-top">
           <div className="text-center">
             <p className="fz-14">
-              © 2025 CreativeMind is Proudly Powered by{' '}
+              © 2025 {SITE.name} is Proudly Powered by{' '}
               <span className="underline main-color">
-                <a href="https://themeforest.net/user/UiCamp" target="_blank">
-                  CreativeMind
-                </a>
+                <a href={SITE.website} target="_blank">{SITE.name}</a>
               </span>
             </p>
           </div>

@@ -4,20 +4,31 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:clean": "rimraf .next && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "rimraf .next"
   },
   "dependencies": {
+    "@google-analytics/data": "^6.1.0",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.107.0",
     "eslint": "8.56.0",
     "eslint-config-next": "14.1.0",
     "firebase": "^11.10.0",
     "gsap": "^3.12.5",
     "isotope": "^1.0.0-alpha.3",
     "isotope-layout": "^3.0.6",
+    "jimp": "^1.6.1",
     "next": "14.2.35",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "recharts": "^3.8.1",
+    "sharp": "^0.34.5",
     "swiper": "^8.4.7"
+  },
+  "devDependencies": {
+    "rimraf": "^6.1.3"
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { SITE } from "@/lib/siteConfig";
 
 export default function PrivacyPolicy() {
   return (
@@ -147,10 +148,10 @@ export default function PrivacyPolicy() {
                 <p>
                   <strong>Creative Mind IT Solutions</strong>
                 </p>
-                <p>Email: hb.26editor@gmail.com</p>
-                <p>Phone: +91 9423572960</p>
-                <p>Location: Pune, Maharashtra, India</p>
-                <p>Website: https://creativemind-zeta.vercel.app</p>
+                <p>Email: <a href={SITE.emailHref}>{SITE.email}</a></p>
+                <p>Phone: <a href={SITE.phoneTel}>{SITE.phone}</a></p>
+                <p>Location: {SITE.city}</p>
+                <p>Website: <a href={SITE.website}>{SITE.website}</a></p>
               </div>
             </div>
 

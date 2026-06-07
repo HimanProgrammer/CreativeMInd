@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useLayoutEffect } from 'react';
 import { gsap } from 'gsap';
+import { SITE } from '@/lib/siteConfig';
 import loadBackgroudImages from '@/common/loadBackgroudImages';
 function Header() {
   useLayoutEffect(() => {
@@ -68,15 +69,15 @@ function Header() {
         <div className="info d-flex align-items-center justify-content-end mt-100">
           <div className="item">
             <h6 className="sub-title mb-10">Email :</h6>
-            <span className="p-color">Webfolio.Info@gmail.com</span>
+            <span className="p-color">{SITE.email}</span>
           </div>
           <div className="item">
             <h6 className="sub-title mb-10">Phone :</h6>
-            <span className="p-color">+2 456 (343) 24 45</span>
+            <span className="p-color">{SITE.phone}</span>
           </div>
           <div className="item">
             <h6 className="sub-title mb-10">Address :</h6>
-            <span className="p-color">5919 Trussville Pkwy, Birmingham</span>
+            <span className="p-color">{SITE.addressShort}</span>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { SITE } from '@/lib/siteConfig';
 
 function Contact() {
   return (
@@ -8,30 +9,21 @@ function Contact() {
           <div className="col-lg-4 valign">
             <div className="sec-head info-box full-width md-mb80">
               <div className="phone fz-30 fw-600 underline main-color">
-                <a href="#0">+91 7888113974</a>
+                <a href={SITE.phoneTel}>{SITE.phone}</a>
               </div>
               <div className="morinfo mt-50 pb-30 bord-thin-bottom">
                 <h6 className="mb-15">Address</h6>
-                <p>Goodwill Enclave, 25/301, Kalyani Nagar, Pune, Maharashtra 411006</p>
+                <p>{SITE.address}</p>
               </div>
               <div className="morinfo mt-30 pb-30 bord-thin-bottom">
                 <h6 className="mb-15">Email</h6>
-                <p>Support@UiCamp.com</p>
+                <p><a href={SITE.emailHref}>{SITE.email}</a></p>
               </div>
-
               <div className="social-icon mt-50">
-                <a href="#0">
-                  <i className="fab fa-facebook-f"></i>
-                </a>
-                <a href="#0">
-                  <i className="fab fa-dribbble"></i>
-                </a>
-                <a href="#0">
-                  <i className="fab fa-behance"></i>
-                </a>
-                <a href="#0">
-                  <i className="fab fa-instagram"></i>
-                </a>
+                <a href={SITE.social.facebook}><i className="fab fa-facebook-f"></i></a>
+                <a href={SITE.social.dribbble}><i className="fab fa-dribbble"></i></a>
+                <a href={SITE.social.behance}><i className="fab fa-behance"></i></a>
+                <a href={SITE.social.instagram}><i className="fab fa-instagram"></i></a>
               </div>
             </div>
           </div>
@@ -43,65 +35,30 @@ function Contact() {
                   Send a <span className="fw-200">message</span>
                 </h3>
               </div>
-              <form
-                id="contact-form"
-                className="form2"
-                method="post"
-                action="contact.php"
-              >
+              <form id="contact-form" className="form2" method="post" action="contact.php">
                 <div className="messages"></div>
-
                 <div className="controls row">
                   <div className="col-lg-6">
                     <div className="form-group mb-30">
-                      <input
-                        id="form_name"
-                        type="text"
-                        name="name"
-                        placeholder="Name"
-                        required="required"
-                      />
+                      <input id="form_name" type="text" name="name" placeholder="Name" required="required" />
                     </div>
                   </div>
-
                   <div className="col-lg-6">
                     <div className="form-group mb-30">
-                      <input
-                        id="form_email"
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        required="required"
-                      />
+                      <input id="form_email" type="email" name="email" placeholder="Email" required="required" />
                     </div>
                   </div>
-
                   <div className="col-12">
                     <div className="form-group mb-30">
-                      <input
-                        id="form_subject"
-                        type="text"
-                        name="subject"
-                        placeholder="Subject"
-                      />
+                      <input id="form_subject" type="text" name="subject" placeholder="Subject" />
                     </div>
                   </div>
-
                   <div className="col-12">
                     <div className="form-group">
-                      <textarea
-                        id="form_message"
-                        name="message"
-                        placeholder="Message"
-                        rows="4"
-                        required="required"
-                      ></textarea>
+                      <textarea id="form_message" name="message" placeholder="Message" rows="4" required="required"></textarea>
                     </div>
                     <div className="mt-30">
-                      <button
-                        type="submit"
-                        className="butn butn-full butn-bord radius-30"
-                      >
+                      <button type="submit" className="butn butn-full butn-bord radius-30">
                         <span className="text">Let&lsquo;s Talk</span>
                       </button>
                     </div>
