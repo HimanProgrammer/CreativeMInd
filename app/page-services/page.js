@@ -1,101 +1,44 @@
 import generateStylesheetObject from '@/common/generateStylesheetsObject';
-import Lines from '@/components/common/Lines';
-import ProgressScroll from '@/components/common/ProgressScroll';
-import Cursor from '@/components/common/cusor';
-import LoadingScreen from '@/components/common/loader';
-import Footer from '@/components/common/Footer';
-import Marq2 from '@/components/common/Marq2';
-import Navbar from '@/components/common/Navbar';
-import Script from 'next/script';
-import Clients from '@/components/common/Clients';
+import CustomCursor from '@/components/home-redesign/CustomCursor';
+import ScrollReveal from '@/components/home-redesign/ScrollReveal';
+import Navbar from '@/components/home-redesign/Navbar';
+import Footer from '@/components/home-redesign/Footer';
+import Header from '@/components/page-services/Header';
 import Services from '@/components/home-digital-agency/Services';
 import Intro2 from '@/components/home-digital-agency/Intro2';
-import Testimonials from '@/components/home-digital-agency/Testimonials';
-import Blog from '@/components/home-digital-agency/Blog';
-import Header from '@/components/page-services/Header';
 import Numbers from '@/components/page-services/Numbers';
+import Testimonials from '@/components/home-digital-agency/Testimonials';
+import Clients from '@/components/common/Clients';
+import Blog from '@/components/home-digital-agency/Blog';
 
 export const metadata = {
-  title: 'Services - CreativeMind',
+  title: 'Services - CreativeMind IT Solutions',
   icons: {
     icon: '/assets/imgs/favicon.ico',
     shortcut: '/assets/imgs/favicon.ico',
     other: generateStylesheetObject([
       '/assets/css/plugins.css',
-      '/assets/css/style.css',
-      'https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap',
-      'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap',
+      '/assets/css/redesign.css',
     ]),
   },
 };
 
-export default function Home() {
+export default function ServicesPage() {
   return (
-    <body>
-      <LoadingScreen />
-      <Cursor />
-      <ProgressScroll />
-      <Lines />
+    <body className="redesign">
+      <CustomCursor />
+      <ScrollReveal />
       <Navbar />
-      <div id="smooth-wrapper">
-        <div id="smooth-content">
-          <main className="main-bg o-hidden">
-            <Header />
-            <Services />
-            <Intro2 />
-            <Numbers />
-            <Testimonials />
-            <Clients />
-            <Blog />
-            <Marq2 />
-          </main>
-          <Footer />
-        </div>
-      </div>
-
-      <Script
-        src="/assets/js/ScrollTrigger.min.js"
-        strategy="beforeInteractive"
-      />
-      <Script
-        src="/assets/js/ScrollSmoother.min.js"
-        strategy="beforeInteractive"
-      />
-
-      <Script strategy="beforeInteractive" src="/assets/js/plugins.js"></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/TweenMax.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/charming.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/countdown.js"
-      ></Script>
-
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/gsap.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/splitting.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/isotope.pkgd.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/imgReveal/imagesloaded.pkgd.min.js"
-      ></Script>
-
-      {/* <Script src="/assets/js/smoother-script.js" strategy="lazyOnload" /> */}
-
-      <Script src="/assets/js/scripts.js"></Script>
+      <main>
+        <Header />
+        <Services />
+        <Intro2 />
+        <Numbers />
+        <Testimonials />
+        <Clients />
+        <Blog />
+      </main>
+      <Footer />
     </body>
   );
 }

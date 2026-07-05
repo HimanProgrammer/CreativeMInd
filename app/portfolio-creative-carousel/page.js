@@ -1,86 +1,32 @@
 import generateStylesheetObject from '@/common/generateStylesheetsObject';
-import Lines from '@/components/common/Lines';
-import ProgressScroll from '@/components/common/ProgressScroll';
-import Cursor from '@/components/common/cusor';
-import LoadingScreen from '@/components/common/loader';
-import Footer from '@/components/common/Footer';
-import Navbar from '@/components/common/Navbar';
-import Script from 'next/script';
+import CustomCursor from '@/components/home-redesign/CustomCursor';
+import ScrollReveal from '@/components/home-redesign/ScrollReveal';
+import Navbar from '@/components/home-redesign/Navbar';
+import Footer from '@/components/home-redesign/Footer';
 import Portfolio from '@/components/p-creative-carousel/Portfolio';
 
 export const metadata = {
-  title: 'webfolio',
+  title: 'Creative Carousel - CreativeMind IT Solutions',
   icons: {
     icon: '/assets/imgs/favicon.ico',
     shortcut: '/assets/imgs/favicon.ico',
     other: generateStylesheetObject([
       '/assets/css/plugins.css',
-      '/assets/css/style.css',
-      'https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap',
-      'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap',
+      '/assets/css/redesign.css',
     ]),
   },
 };
 
-export default function Home() {
+export default function CreativeCarouselPage() {
   return (
-    <body>
-      <LoadingScreen />
-      <Cursor />
-      <ProgressScroll />
-      <Lines />
+    <body className="redesign">
+      <CustomCursor />
+      <ScrollReveal />
       <Navbar />
-      <div id="smooth-wrapper">
-        <div id="smooth-content">
-          <main className="main-bg o-hidden">
-            <Portfolio />
-          </main>
-          <Footer />
-        </div>
-      </div>
-      <Script
-        src="/assets/js/ScrollTrigger.min.js"
-        strategy="beforeInteractive"
-      />
-      <Script
-        src="/assets/js/ScrollSmoother.min.js"
-        strategy="beforeInteractive"
-      />
-
-      <Script strategy="beforeInteractive" src="/assets/js/plugins.js"></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/TweenMax.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/charming.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/countdown.js"
-      ></Script>
-
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/gsap.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/splitting.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/isotope.pkgd.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="/assets/js/imgReveal/imagesloaded.pkgd.min.js"
-      ></Script>
-
-      {/* <Script src="/assets/js/smoother-script.js" strategy="lazyOnload" /> */}
-
-      <Script src="/assets/js/scripts.js"></Script>
+      <main>
+        <Portfolio />
+      </main>
+      <Footer />
     </body>
   );
 }

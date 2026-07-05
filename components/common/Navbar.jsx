@@ -174,102 +174,10 @@ function Navbar() {
             </li>
 
 
-            <li
-              onMouseLeave={handleDropdownMouseLeave}
-              onMouseMove={handleDropdownMouseMove}
-              className="nav-item dropdown"
-            >
-              <a
-                className="nav-link dropdown-toggle"
-                data-toggle="dropdown"
-                href="#"
-                role="button"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <span className="rolling-text">Pages</span>
-              </a>
-              <ul className="dropdown-menu">
-                <li>
-                  <a className="dropdown-item" href="/page-about">
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="/page-services">
-                    Services
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="/page-services-details">
-                    Services Details
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="/page-team">
-                    Our Team
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="/page-team-details">
-                    Team Details
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="/page-contact">
-                    Contact Us
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="/page-FAQ">
-                    FAQS
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="/page-404">
-                    Error 404
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li
-              onMouseLeave={handleDropdownMouseLeave}
-              onMouseMove={handleDropdownMouseMove}
-              className="nav-item dropdown"
-            >
-              <a
-                className="nav-link dropdown-toggle"
-                data-toggle="dropdown"
-                href="#"
-                role="button"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
+            <li className="nav-item">
+              <a className="nav-link" href="/portfolio-masonry">
                 <span className="rolling-text">Portfolio</span>
               </a>
-              <div className="dropdown-menu">
-                <a className="dropdown-item" href="/portfolio-gallery">
-                  Gallery
-                </a>
-                <a className="dropdown-item" href="/portfolio-creative">
-                  Portfolio Creative
-                </a>
-                <a
-                  className="dropdown-item"
-                  href="/portfolio-creative-carousel"
-                >
-                  Creative Carousel
-                </a>
-                <a className="dropdown-item" href="/portfolio-grid">
-                  Portfolio Grid
-                </a>
-                <a className="dropdown-item" href="/portfolio-masonry">
-                  Portfolio Masonry
-                </a>
-                <a className="dropdown-item" href="/project-details">
-                  Project Details
-                </a>
-              </div>
             </li>
             {/* <li
               onMouseLeave={handleDropdownMouseLeave}

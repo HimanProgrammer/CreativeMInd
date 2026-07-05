@@ -1,19 +1,16 @@
 import generateStylesheetObject from '@/common/generateStylesheetsObject';
-import Lines from '@/components/common/Lines';
-import ProgressScroll from '@/components/common/ProgressScroll';
-import Cursor from '@/components/common/cusor';
-import LoadingScreen from '@/components/common/loader';
-import Footer from '@/components/common/Footer';
-import Navbar from '@/components/common/Navbar';
-import Script from 'next/script';
-import Blog from '@/components/home-main/Blog';
-import Clients from '@/components/common/Clients';
-import Team from '@/components/home-modern-studio/Team';
-import Testimonials from '@/components/home-modern-studio/Testimonials';
+import CustomCursor from '@/components/home-redesign/CustomCursor';
+import ScrollReveal from '@/components/home-redesign/ScrollReveal';
+import Navbar from '@/components/home-redesign/Navbar';
+import Footer from '@/components/home-redesign/Footer';
 import Header from '@/components/page-about/Header';
 import Intro from '@/components/page-about/Intro';
 import Numbers from '@/components/page-about/Numbers';
 import Services from '@/components/page-about/Services';
+import Team from '@/components/home-modern-studio/Team';
+import Testimonials from '@/components/home-modern-studio/Testimonials';
+import Clients from '@/components/common/Clients';
+import Blog from '@/components/home-main/Blog';
 
 export const metadata = {
   title: 'About Us - CreativeMind IT Solutions',
@@ -22,49 +19,28 @@ export const metadata = {
     shortcut: '/assets/imgs/favicon.ico',
     other: generateStylesheetObject([
       '/assets/css/plugins.css',
-      '/assets/css/style.css',
       '/assets/css/redesign.css',
-      'https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap',
-      'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700&display=swap',
     ]),
   },
 };
 
 export default function AboutPage() {
   return (
-    <body className="about-light-page">
-      <LoadingScreen />
-      <Cursor />
-      <ProgressScroll />
-      <Lines />
+    <body className="redesign">
+      <CustomCursor />
+      <ScrollReveal />
       <Navbar />
-      <div id="smooth-wrapper">
-        <div id="smooth-content">
-          <main className="main-bg o-hidden">
-            <Header />
-            <Intro />
-            <Numbers />
-            <Services />
-            <Team />
-            <Testimonials />
-            <Clients />
-            <Blog />
-          </main>
-          <Footer />
-        </div>
-      </div>
-
-      <Script src="/assets/js/ScrollTrigger.min.js" strategy="beforeInteractive" />
-      <Script src="/assets/js/ScrollSmoother.min.js" strategy="beforeInteractive" />
-      <Script strategy="beforeInteractive" src="/assets/js/plugins.js" />
-      <Script strategy="beforeInteractive" src="/assets/js/TweenMax.min.js" />
-      <Script strategy="beforeInteractive" src="/assets/js/charming.min.js" />
-      <Script strategy="beforeInteractive" src="/assets/js/countdown.js" />
-      <Script strategy="beforeInteractive" src="/assets/js/gsap.min.js" />
-      <Script strategy="beforeInteractive" src="/assets/js/splitting.min.js" />
-      <Script strategy="beforeInteractive" src="/assets/js/isotope.pkgd.min.js" />
-      <Script strategy="beforeInteractive" src="/assets/js/imgReveal/imagesloaded.pkgd.min.js" />
-      <Script src="/assets/js/scripts.js" />
+      <main>
+        <Header />
+        <Intro />
+        <Numbers />
+        <Services />
+        <Team />
+        <Testimonials />
+        <Clients />
+        <Blog />
+      </main>
+      <Footer />
     </body>
   );
 }

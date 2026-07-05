@@ -7,7 +7,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [pagesOpen, setPagesOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -28,22 +27,7 @@ export default function Navbar() {
       { href: '/page-services', label: 'Services' },
       { href: '/page-services-details', label: 'Services Details' },
     ]},
-    { href: '/portfolio-gallery', label: 'PORTFOLIO', dropdown: [
-      { href: '/portfolio-gallery', label: 'Gallery' },
-      { href: '/portfolio-creative', label: 'Portfolio Creative' },
-      { href: '/portfolio-creative-carousel', label: 'Creative Carousel' },
-      { href: '/portfolio-grid', label: 'Portfolio Grid' },
-      { href: '/portfolio-masonry', label: 'Portfolio Masonry' },
-    ]},
-    { href: '#', label: 'PAGES', dropdown: [
-      { href: '/page-about', label: 'About Us' },
-      { href: '/page-team', label: 'Our Team' },
-      { href: '/page-team-details', label: 'Team Details' },
-      { href: '/page-contact', label: 'Contact Us' },
-      { href: '/page-FAQ', label: 'FAQs' },
-      { href: '/privacy-policy', label: 'Privacy Policy' },
-      { href: '/page-404', label: 'Error 404' },
-    ]},
+    { href: '/portfolio-masonry', label: 'PORTFOLIO' },
     { href: '/blog-grid-3column', label: 'BLOG', dropdown: [
       { href: '/blog-classic', label: 'Blog Standard' },
       { href: '/blog-grid-sidebar', label: 'Grid With Sidebar' },
@@ -124,15 +108,13 @@ export default function Navbar() {
                     className={`rd-mobile-link rd-mobile-parent${isGroupActive(link) ? ' active' : ''}`}
                     onClick={() => {
                       if (link.label === 'SERVICES') setServicesOpen(o => !o);
-                      if (link.label === 'PAGES') setPagesOpen(o => !o);
                     }}
                   >
                     {link.label}
                     <span className="rd-mobile-arrow">▾</span>
                   </button>
                   {((link.label === 'SERVICES' && servicesOpen) ||
-                    (link.label === 'PAGES' && pagesOpen) ||
-                    (!['SERVICES', 'PAGES'].includes(link.label))) && (
+                    (link.label !== 'SERVICES')) && (
                     <div className="rd-mobile-sub">
                       {link.dropdown.map((d) => (
                         <Link

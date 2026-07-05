@@ -17,6 +17,7 @@
     "eslint": "8.56.0",
     "eslint-config-next": "14.1.0",
     "firebase": "^11.10.0",
+    "googleapis": "^173.0.0",
     "gsap": "^3.12.5",
     "isotope": "^1.0.0-alpha.3",
     "isotope-layout": "^3.0.6",

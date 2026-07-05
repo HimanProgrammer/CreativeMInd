@@ -53,7 +53,7 @@ function Portfolio() {
               <SwiperSlide key={i}>
                 <div className="item d-flex align-items-center">
                   <div className="cont">
-                    <h6 className="sub-title main-color mb-15">UI/UX Design</h6>
+                    <h6 className="sub-title main-color mb-15">{item.category || 'Creative Design'}</h6>
                     <h2>
                       {item.title} <br /> {item.subTitle}
                     </h2>

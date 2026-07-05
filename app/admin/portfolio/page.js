@@ -373,8 +373,9 @@ export default function AdminPortfolio() {
 
   async function handleSaveEdit() {
     if (!editItem) return;
-    await supabase.from('portfolio_items').update({ title: editItem.title, category: editItem.category }).eq('id', editItem.id);
-    setItems(prev => prev.map(i => i.id === editItem.id ? { ...i, title: editItem.title, category: editItem.category } : i));
+    const update = { title: editItem.title, category: editItem.category, video_url: editItem.video_url || null };
+    await supabase.from('portfolio_items').update(update).eq('id', editItem.id);
+    setItems(prev => prev.map(i => i.id === editItem.id ? { ...i, ...update } : i));
     setEditItem(null);
   }
 
@@ -582,12 +583,28 @@ export default function AdminPortfolio() {
           <div style={S.modal} onClick={e => e.stopPropagation()}>
             <h3 style={{ color: '#fff', margin: '0 0 20px' }}>Edit Image</h3>
             <img src={editItem.image_url} alt="" style={{ width: '100%', height: 180, objectFit: 'cover', borderRadius: 10, marginBottom: 20 }} />
+
             <label style={S.label}>Title</label>
             <input style={S.input} value={editItem.title || ''} onChange={e => setEditItem(p => ({ ...p, title: e.target.value }))} placeholder="Image title" />
+
             <label style={S.label}>Category</label>
             <select style={S.input} value={editItem.category || 'General'} onChange={e => setEditItem(p => ({ ...p, category: e.target.value }))}>
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
+
+            <label style={S.label}>Video Link <span style={{ color: '#555', fontWeight: 400, textTransform: 'none', fontSize: 11 }}>(YouTube / Vimeo — optional)</span></label>
+            <input
+              style={S.input}
+              value={editItem.video_url || ''}
+              onChange={e => setEditItem(p => ({ ...p, video_url: e.target.value }))}
+              placeholder="https://www.youtube.com/watch?v=..."
+            />
+            {editItem.video_url && (
+              <p style={{ color: '#6c63ff', fontSize: 12, margin: '-12px 0 16px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                🎬 <a href={editItem.video_url} target="_blank" rel="noreferrer" style={{ color: '#6c63ff' }}>Preview link ↗</a>
+              </p>
+            )}
+
             <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
               <button onClick={handleSaveEdit} style={{ ...S.addBtn, flex: 1 }}>Save Changes</button>
               <button onClick={() => setEditItem(null)} style={{ ...S.secondaryBtn, flex: 1 }}>Cancel</button>
@@ -610,8 +627,20 @@ export default function AdminPortfolio() {
               {previewItem.file_size && <span style={{ color: '#666', fontSize: 13 }}>{Math.round(previewItem.file_size / 1024)} KB</span>}
               <span style={{ color: '#666', fontSize: 13 }}>{previewItem.created_at ? new Date(previewItem.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}</span>
             </div>
+            {previewItem.video_url && (
+              <div style={{ marginTop: 14, padding: '10px 14px', background: 'rgba(108,99,255,0.1)', border: '1px solid rgba(108,99,255,0.25)', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 20 }}>🎬</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ color: '#aaa', fontSize: 11, margin: '0 0 2px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Video Link</p>
+                  <a href={previewItem.video_url} target="_blank" rel="noreferrer" style={{ color: '#6c63ff', fontSize: 13, wordBreak: 'break-all' }}>{previewItem.video_url}</a>
+                </div>
+              </div>
+            )}
             <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
               <a href={previewItem.image_url} target="_blank" rel="noreferrer" style={{ ...S.secondaryBtn, textDecoration: 'none', textAlign: 'center' }}>Open Full Size ↗</a>
+              {previewItem.video_url && (
+                <a href={previewItem.video_url} target="_blank" rel="noreferrer" style={{ ...S.secondaryBtn, textDecoration: 'none', textAlign: 'center', color: '#a78bfa' }}>▶ Watch Video</a>
+              )}
               <button onClick={() => { setPreviewItem(null); setEditItem({ ...previewItem }); }} style={S.addBtn}>✏️ Edit</button>
             </div>
           </div>
