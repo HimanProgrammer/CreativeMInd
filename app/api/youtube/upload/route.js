@@ -3,7 +3,7 @@ import { google } from 'googleapis';
 import { createClient } from '@supabase/supabase-js';
 import { Readable } from 'stream';
 
-export const config = { api: { bodyParser: false } };
+export const maxDuration = 300; // 5 min for large video uploads
 
 async function getYouTubeClient() {
   const supabase = createClient(
