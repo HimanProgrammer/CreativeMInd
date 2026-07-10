@@ -8,6 +8,18 @@ import AdminSidebar from '@/components/admin/AdminSidebar';
 
 const CATEGORIES = ['General', 'Web Design', 'Mobile App', 'Branding', 'UI/UX', 'Logo', 'Social Media', 'Photography'];
 
+const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90"><rect width="100%" height="100%" fill="#2a2a3e"/><text x="50%" y="50%" fill="#666" font-size="11" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">No image</text></svg>'
+);
+
+function thumbSrc(item) {
+  if (item.image_url && item.image_url.startsWith('http')) return item.image_url;
+  if (item.thumbnail_url && item.thumbnail_url.startsWith('http')) return item.thumbnail_url;
+  const m = (item.video_url || '').match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+  if (m) return `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`;
+  return PLACEHOLDER;
+}
+
 export default function AdminPortfolio() {
   const router = useRouter();
   const { user, loading: authLoading, logout } = useAuth();
@@ -516,7 +528,7 @@ export default function AdminPortfolio() {
                 {filtered.map(item => (
                   <div key={item.id} style={{ ...S.card, outline: selected.has(item.id) ? '2px solid #6c63ff' : 'none' }}>
                     <div style={S.imgWrap}>
-                      <img src={item.image_url} alt={item.title} style={S.img} onError={e => e.target.src = '/assets/imgs/placeholder.jpg'} />
+                      <img src={thumbSrc(item)} alt={item.title} style={S.img} onError={e => { e.target.onerror = null; e.target.src = PLACEHOLDER; }} />
                       <div style={S.overlay} className="card-overlay">
                         <button onClick={() => setPreviewItem(item)} style={S.overlayBtn}>👁 View</button>
                         <button onClick={() => setEditItem({ ...item })} style={S.overlayBtn}>✏️ Edit</button>
@@ -528,13 +540,13 @@ export default function AdminPortfolio() {
                         <input type="checkbox" checked={selected.has(item.id)} onChange={() => toggleSelect(item.id)} onClick={e => e.stopPropagation()} />
                       </div>
                     </div>
-                    <div style={S.cardInfo}>
-                      <p style={S.cardTitle}>{item.title || 'Untitled'}</p>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={S.badge}>{item.category || 'General'}</span>
-                        {item.file_size && <span style={{ color: '#555', fontSize: 11 }}>{Math.round(item.file_size / 1024)}KB</span>}
-                      </div>
-                    </div>
+                    {item.video_url && (
+                      <a href={item.video_url} target="_blank" rel="noreferrer"
+                        title="Has video" onClick={e => e.stopPropagation()}
+                        style={{ position: 'absolute', bottom: 8, right: 8, fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 20, background: 'rgba(0,0,0,0.6)', color: '#f05a28', border: '1px solid rgba(240,90,40,0.3)', textDecoration: 'none' }}>
+                        ▶
+                      </a>
+                    )}
                   </div>
                 ))}
               </div>
@@ -556,10 +568,18 @@ export default function AdminPortfolio() {
                   <div key={item.id} style={{ ...S.listRow, background: selected.has(item.id) ? 'rgba(108,99,255,0.1)' : '#1a1a2e' }}>
                     <span style={{ width: 30 }}><input type="checkbox" checked={selected.has(item.id)} onChange={() => toggleSelect(item.id)} /></span>
                     <span style={{ width: 60 }}>
-                      <img src={item.image_url} alt="" style={{ width: 48, height: 36, objectFit: 'cover', borderRadius: 6 }} onError={e => e.target.src = '/assets/imgs/placeholder.jpg'} />
+                      <img src={thumbSrc(item)} alt="" style={{ width: 48, height: 36, objectFit: 'cover', borderRadius: 6 }} onError={e => { e.target.onerror = null; e.target.src = PLACEHOLDER; }} />
                     </span>
                     <span style={{ flex: 1, color: '#ccc', fontSize: 13 }}>{item.title || 'Untitled'}</span>
-                    <span style={{ width: 120 }}><span style={S.badge}>{item.category || 'General'}</span></span>
+                    <span style={{ width: 120, display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <span style={S.badge}>{item.category || 'General'}</span>
+                      {item.video_url && (
+                        <a href={item.video_url} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()}
+                          style={{ fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 20, background: 'rgba(240,90,40,0.15)', color: '#f05a28', border: '1px solid rgba(240,90,40,0.3)', textDecoration: 'none' }}>
+                          ▶
+                        </a>
+                      )}
+                    </span>
                     <span style={{ width: 80, color: '#666', fontSize: 12 }}>{item.file_size ? `${Math.round(item.file_size / 1024)}KB` : '—'}</span>
                     <span style={{ width: 130, color: '#555', fontSize: 12 }}>{item.created_at ? new Date(item.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}</span>
                     <span style={{ width: 160, display: 'flex', gap: 6 }}>
@@ -737,13 +757,15 @@ const SQL_SETUP = `CREATE TABLE IF NOT EXISTS portfolio_items (
   thumbnail_url TEXT,
   file_name TEXT,
   file_size BIGINT,
+  video_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE portfolio_items ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public read portfolio" ON portfolio_items FOR SELECT USING (true);
-CREATE POLICY "Admin insert portfolio" ON portfolio_items FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admin update portfolio" ON portfolio_items FOR UPDATE USING (true);
-CREATE POLICY "Admin delete portfolio" ON portfolio_items FOR DELETE USING (true);`;
+ALTER TABLE portfolio_items ADD COLUMN IF NOT EXISTS video_url TEXT;
+CREATE POLICY IF NOT EXISTS "Public read portfolio" ON portfolio_items FOR SELECT USING (true);
+CREATE POLICY IF NOT EXISTS "Admin insert portfolio" ON portfolio_items FOR INSERT WITH CHECK (true);
+CREATE POLICY IF NOT EXISTS "Admin update portfolio" ON portfolio_items FOR UPDATE USING (true);
+CREATE POLICY IF NOT EXISTS "Admin delete portfolio" ON portfolio_items FOR DELETE USING (true);`;
 
 const S = {
   loading: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a18' },
@@ -767,10 +789,10 @@ const S = {
   viewBtn: { width: 34, height: 34, background: '#1a1a2e', border: '1px solid #333', borderRadius: 6, color: '#888', cursor: 'pointer', fontSize: 16 },
   viewBtnActive: { background: '#6c63ff', borderColor: '#6c63ff', color: '#fff' },
   empty: { textAlign: 'center', padding: '80px 40px' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 20 },
-  card: { background: '#1a1a2e', border: '1px solid #222', borderRadius: 12, overflow: 'hidden', transition: 'transform 0.15s', cursor: 'pointer' },
+  grid: { columnWidth: 200, columnGap: 12 },
+  card: { position: 'relative', background: '#1a1a2e', border: '1px solid #222', borderRadius: 12, overflow: 'hidden', transition: 'transform 0.15s', cursor: 'pointer', breakInside: 'avoid', display: 'inline-block', width: '100%', marginBottom: 12 },
   imgWrap: { position: 'relative', overflow: 'hidden' },
-  img: { width: '100%', height: 180, objectFit: 'cover', display: 'block' },
+  img: { width: '100%', height: 'auto', display: 'block' },
   overlay: { position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap', padding: 8 },
   overlayBtn: { padding: '7px 12px', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 6, color: '#fff', cursor: 'pointer', fontSize: 12, fontWeight: 500 },
   selectCheck: { position: 'absolute', top: 8, left: 8, background: 'rgba(0,0,0,0.5)', borderRadius: 4, padding: '2px 4px' },

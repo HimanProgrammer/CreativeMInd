@@ -1,6 +1,7 @@
 
 import './globals.css';
 import Script from 'next/script';
+import GlobalScrollReveal from '@/components/common/GlobalScrollReveal';
 
 export const metadata = {
   title: 'CreativeMind IT Solutions',
@@ -51,6 +52,7 @@ export default function RootLayout({ children }) {
         </Script>
       </head>
       <body>
+        <GlobalScrollReveal />
         {children}
       </body>
     </html>

@@ -24,7 +24,8 @@ export default function Navbar() {
     { href: '/', label: 'HOME' },
     { href: '/page-about', label: 'ABOUT' },
     { href: '/page-services', label: 'SERVICES', dropdown: [
-      { href: '/page-services', label: 'Services' },
+      { href: '/page-services', label: 'All Services' },
+      { href: '/service-social-media', label: 'Social Media Marketing' },
       { href: '/page-services-details', label: 'Services Details' },
     ]},
     { href: '/portfolio-masonry', label: 'PORTFOLIO' },

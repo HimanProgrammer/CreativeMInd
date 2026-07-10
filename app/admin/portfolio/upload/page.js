@@ -129,22 +129,27 @@ export default function UploadPortfolio() {
     setVideos(prev => prev.filter((_, idx) => idx !== i));
   }
 
-  const totalCount = images.length + videos.length;
-  const canUpload  = totalCount > 0 && !uploading && dbStatus === 'ok';
+  const totalCount  = images.length + videos.length;
+  const canUploadImg = images.length > 0 && !uploading && dbStatus === 'ok';
+  const canUploadVid = (videos.length > 0 || videoUrl.trim().length > 0) && !uploading && dbStatus === 'ok';
 
-  async function handleUpload() {
-    if (!totalCount) return;
+  async function handleUpload(mode = 'all') {
+    const uploadImages = mode === 'all' ? images : mode === 'images' ? images : [];
+    const uploadVideos = mode === 'all' ? videos : mode === 'videos' ? videos : [];
+    const total = uploadImages.length + uploadVideos.length;
+    const isUrlOnly = mode === 'videos' && total === 0 && videoUrl.trim().length > 0;
+    if (!total && !isUrlOnly) return;
     setUploading(true);
-    setProgress({ done: 0, total: totalCount, msg: '' });
+    setProgress({ done: 0, total: total || 1, msg: '' });
     const newResults = [];
     let done = 0;
 
     // ── Upload Images ────────────────────────────────────────────────
-    for (let i = 0; i < images.length; i++) {
-      const { file } = images[i];
+    for (let i = 0; i < uploadImages.length; i++) {
+      const { file } = uploadImages[i];
       const baseName = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
       const ts = Date.now() + i;
-      setProgress({ done, total: totalCount, msg: `Uploading image ${i + 1}/${images.length}...` });
+      setProgress({ done, total, msg: `Uploading image ${i + 1}/${uploadImages.length}...` });
 
       try {
         const compressed = await compressImage(file);
@@ -188,12 +193,40 @@ export default function UploadPortfolio() {
       setProgress(p => ({ ...p, done }));
     }
 
+    // ── Save Video URL directly (no file upload needed) ─────────────
+    if (uploadVideos.length === 0 && videoUrl.trim()) {
+      setProgress({ done: 0, total: 1, msg: 'Saving video URL to database...' });
+      try {
+        const ytMatch = videoUrl.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+        const ytId    = ytMatch?.[1];
+        const thumb   = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : null;
+        const itemTitle = title.trim() || (ytId ? `YouTube Video` : 'Video');
+        const { error: dbErr } = await supabase.from('portfolio_items').insert({
+          title: itemTitle,
+          category,
+          image_url:     thumb || '',
+          thumbnail_url: thumb || '',
+          video_url:     videoUrl.trim(),
+          file_name:     null,
+          file_size:     null,
+        });
+        if (dbErr) throw dbErr;
+        newResults.push({ type: 'video', name: videoUrl.trim(), status: 'ok', videoUrl: videoUrl.trim(), sizeMB: '—' });
+      } catch (err) {
+        newResults.push({ type: 'video', name: videoUrl.trim(), status: 'err', message: err.message });
+      }
+      setVideoUrl('');
+      setResults(newResults);
+      setUploading(false);
+      return;
+    }
+
     // ── Upload Videos → YouTube ──────────────────────────────────────
-    for (let i = 0; i < videos.length; i++) {
-      const { file } = videos[i];
+    for (let i = 0; i < uploadVideos.length; i++) {
+      const { file } = uploadVideos[i];
       const baseName  = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
       const itemTitle = title.trim() || baseName;
-      setProgress({ done, total: totalCount, msg: `Uploading video ${i + 1}/${videos.length} to YouTube...` });
+      setProgress({ done, total, msg: `Uploading video ${i + 1}/${uploadVideos.length} to YouTube...` });
 
       try {
         const form = new FormData();
@@ -227,8 +260,11 @@ export default function UploadPortfolio() {
       setProgress(p => ({ ...p, done }));
     }
 
-    images.forEach(img => URL.revokeObjectURL(img.preview));
-    setImages([]); setVideos([]);
+    if (mode === 'images' || mode === 'all') {
+      uploadImages.forEach(img => URL.revokeObjectURL(img.preview));
+      setImages([]);
+    }
+    if (mode === 'videos' || mode === 'all') setVideos([]);
     setResults(newResults);
     setUploading(false);
   }
@@ -366,28 +402,43 @@ export default function UploadPortfolio() {
 
           </div>
 
-          {/* ── Upload Button ── */}
-          <div style={{ marginTop: 28, display: 'flex', gap: 12, alignItems: 'center' }}>
+          {/* ── Two Upload Buttons ── */}
+          <div style={{ marginTop: 28, display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
+
+            {/* Upload Images Button */}
             <button
-              onClick={handleUpload}
-              disabled={!canUpload}
+              onClick={() => handleUpload('images')}
+              disabled={!canUploadImg}
               style={{
                 ...S.uploadBtn,
-                opacity: canUpload ? 1 : 0.4,
-                cursor: canUpload ? 'pointer' : 'not-allowed',
+                background: canUploadImg ? 'linear-gradient(135deg,#6c63ff,#4f46e5)' : '#1a1a2e',
+                opacity: canUploadImg ? 1 : 0.45,
+                cursor: canUploadImg ? 'pointer' : 'not-allowed',
+                boxShadow: canUploadImg ? '0 4px 20px rgba(108,99,255,0.4)' : 'none',
               }}
             >
-              {uploading
-                ? `⏳ Uploading ${progress.done}/${progress.total}...`
-                : `↑ Upload ${totalCount > 0 ? totalCount : ''} File${totalCount !== 1 ? 's' : ''}`}
+              {uploading && progress.msg?.includes('image')
+                ? `⏳ ${progress.done}/${progress.total}`
+                : `🖼️ Upload Images${images.length > 0 ? ` (${images.length})` : ''}`}
             </button>
-            {!uploading && totalCount > 0 && (
-              <span style={{ color: '#555', fontSize: 13 }}>
-                {images.length > 0 && `${images.length} image${images.length !== 1 ? 's' : ''}`}
-                {images.length > 0 && videos.length > 0 && ' + '}
-                {videos.length > 0 && `${videos.length} video${videos.length !== 1 ? 's' : ''}`}
-              </span>
-            )}
+
+            {/* Upload Videos Button */}
+            <button
+              onClick={() => handleUpload('videos')}
+              disabled={!canUploadVid}
+              style={{
+                ...S.uploadBtn,
+                background: canUploadVid ? 'linear-gradient(135deg,#f05a28,#e040fb)' : '#1a1a2e',
+                opacity: canUploadVid ? 1 : 0.45,
+                cursor: canUploadVid ? 'pointer' : 'not-allowed',
+                boxShadow: canUploadVid ? '0 4px 20px rgba(240,90,40,0.4)' : 'none',
+              }}
+            >
+              {uploading && progress.msg?.includes('video')
+                ? `⏳ ${progress.done}/${progress.total}`
+                : `🎬 Upload Videos${videos.length > 0 ? ` (${videos.length})` : ''}`}
+            </button>
+
             {dbStatus !== 'ok' && !dbChecking && (
               <span style={{ color: '#f87171', fontSize: 12 }}>⚠️ Fix DB setup first</span>
             )}

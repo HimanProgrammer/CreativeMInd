@@ -18,6 +18,15 @@ const STAT_CARDS = (stats) => [
     trend: 'up',
   },
   {
+    label: 'Videos',
+    value: stats.videos,
+    icon: '🎬',
+    gradient: 'linear-gradient(135deg, #f05a28, #ff8c42)',
+    glow: 'rgba(240,90,40,0.3)',
+    change: 'YouTube',
+    trend: 'up',
+  },
+  {
     label: 'Categories',
     value: stats.categories,
     icon: '📂',
@@ -27,27 +36,18 @@ const STAT_CARDS = (stats) => [
     trend: 'up',
   },
   {
-    label: 'Team Members',
-    value: stats.team,
-    icon: '👥',
-    gradient: 'linear-gradient(135deg, #00bfa5, #00897b)',
-    glow: 'rgba(0,191,165,0.3)',
-    change: 'Active',
-    trend: 'neutral',
-  },
-  {
     label: 'Messages',
     value: stats.messages,
     icon: '✉️',
-    gradient: 'linear-gradient(135deg, #f05a28, #e040fb)',
-    glow: 'rgba(240,90,40,0.3)',
+    gradient: 'linear-gradient(135deg, #00bfa5, #00897b)',
+    glow: 'rgba(0,191,165,0.3)',
     change: 'Unread',
     trend: 'alert',
   },
 ];
 
 const QUICK_ACTIONS = [
-  { label: 'Upload Image', icon: '⬆', href: '/admin/portfolio/upload', color: '#6c63ff' },
+  { label: 'Upload Image/Video', icon: '⬆', href: '/admin/portfolio/upload', color: '#6c63ff' },
   { label: 'New Blog Post', icon: '📝', href: '/admin/blog', color: '#e040fb' },
   { label: 'View Portfolio', icon: '🖼️', href: '/admin/portfolio', color: '#00bfa5' },
   { label: 'View Messages', icon: '✉', href: '/admin/messages', color: '#f05a28' },
@@ -82,8 +82,14 @@ export default function AdminDashboard() {
 
       const uniqueCats = new Set((cats || []).map((c) => c.category)).size;
 
+      const { count: videoCount } = await supabase
+        .from('portfolio_items')
+        .select('*', { count: 'exact', head: true })
+        .not('video_url', 'is', null)
+        .neq('video_url', '');
+
       setRecentImages(items || []);
-      setStats({ images: count || 0, categories: uniqueCats, team: 8, messages: 3 });
+      setStats({ images: count || 0, categories: uniqueCats, videos: videoCount || 0, messages: 3 });
       setLoading(false);
     }
     load();

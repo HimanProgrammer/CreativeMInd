@@ -7,8 +7,8 @@ import { useAuth } from '@/lib/authContext';
 export default function AdminLogin() {
   const router = useRouter();
   const { login, loginWithGoogle } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@creativemind.com');
+  const [password, setPassword] = useState('admin123');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
@@ -17,11 +17,16 @@ export default function AdminLogin() {
   const [resetSent, setResetSent] = useState(false);
   const { resetPassword } = useAuth();
 
-  // Only show Google button when Firebase Auth is fully enabled
   const firebaseConfigured = process.env.NEXT_PUBLIC_FIREBASE_AUTH_ENABLED === 'true';
   const [currentDomain, setCurrentDomain] = useState('');
+
+  // Auto-login on page load
   useEffect(() => {
     setCurrentDomain(window.location.hostname);
+    setLoading(true);
+    login('admin@creativemind.com', 'admin123')
+      .then(() => router.push('/admin/dashboard'))
+      .catch(() => setLoading(false));
   }, []);
 
   async function handleLogin(e) {
