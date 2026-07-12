@@ -58,10 +58,10 @@ function Intro() {
                 <div className="col-md-7">
                   <div className="text">
                     <p className="mb-15">
-                      CreativeMind IT Solutions is a team of designers, developers, and marketers who combine technical precision with creative thinking. We don't just deliver projects — we deliver growth.
+                      CreativeMind IT Solutions is a team of designers, developers, and marketers who combine technical precision with creative thinking. We don&apos;t just deliver projects — we deliver growth.
                     </p>
                     <p>
-                      Whether you're a startup launching your first product or an established brand looking to scale, we build the digital infrastructure that takes you there.
+                      Whether you&apos;re a startup launching your first product or an established brand looking to scale, we build the digital infrastructure that takes you there.
                     </p>
                     <div className="mt-30">
                       <ul className="rest dot-list">

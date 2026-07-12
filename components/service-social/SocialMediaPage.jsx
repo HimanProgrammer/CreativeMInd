@@ -155,7 +155,7 @@ export default function SocialMediaPage() {
       <section style={S.ctaBanner}>
         <div style={S.ctaBannerInner}>
           <h2 style={S.ctaBannerH}>Ready to blow up your social?</h2>
-          <p style={S.ctaBannerP}>Let's build content that gets views, followers, and real business results.</p>
+          <p style={S.ctaBannerP}>Let&apos;s build content that gets views, followers, and real business results.</p>
           <Link href="/page-contact" style={S.ctaBannerBtn}>
             Start a Campaign →
           </Link>

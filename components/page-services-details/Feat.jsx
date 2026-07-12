@@ -99,7 +99,7 @@ function Feat() {
                 Frequently <span className="fw-200">Asked</span>
               </h3>
               <p className="p-color" style={{ lineHeight: 1.8 }}>
-                Can't find your answer here? Drop us a message and we'll get back to you within 24 hours.
+                Can&apos;t find your answer here? Drop us a message and we&apos;ll get back to you within 24 hours.
               </p>
               <a href="/page-contact" className="butn-crev d-flex align-items-center mt-40">
                 <span className="hover-this">
@@ -142,7 +142,7 @@ function Feat() {
                 Ready to get started?
               </h6>
               <h2 className="fw-700" style={{ color: '#fff', fontSize: 'clamp(28px,4vw,50px)', lineHeight: 1.1, margin: 0 }}>
-                Let's build something great together.
+                Let&apos;s build something great together.
               </h2>
             </div>
             <a

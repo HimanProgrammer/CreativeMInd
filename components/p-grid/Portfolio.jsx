@@ -52,7 +52,7 @@ export default function Portfolio() {
           <h2 style={S.heading}>
             Selected <em style={S.headingAccent}>Projects</em>
           </h2>
-          <p style={S.subText}>A curated collection of work we're proud of.</p>
+          <p style={S.subText}>A curated collection of work we&apos;re proud of.</p>
         </div>
 
         {/* Filter tabs */}
@@ -137,7 +137,7 @@ export default function Portfolio() {
       <div style={S.cta}>
         <div style={S.ctaInner}>
           <p style={S.ctaLabel}>Ready to build something great?</p>
-          <h3 style={S.ctaHeading}>Let's work together.</h3>
+          <h3 style={S.ctaHeading}>Let&apos;s work together.</h3>
           <a href="/page-contact" style={S.ctaBtn}>Start a Project →</a>
         </div>
       </div>
