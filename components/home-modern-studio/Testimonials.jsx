@@ -70,12 +70,12 @@ function Testimonials() {
             <SwiperSlide>
               <div className="item">
                 <div className="cont">
-                  <h6 className="sub-title mb-15">Design Quality</h6>
+                  <h6 className="sub-title mb-15">Social Media Growth</h6>
                   <div className="text">
                     <p>
-                      “ I have been hiring people in this space for a number of
-                      years and I have never seen this level of
-                      professionalism.”
+                      “ The festival creatives and reels CreativeMind made
+                      brought a real jump in our showroom walk-ins. They truly
+                      understand the Indian market. ”
                     </p>
                   </div>
                 </div>
@@ -87,9 +87,9 @@ function Testimonials() {
                       </div>
                     </div>
                     <div className="ml-20">
-                      <h6 className="fz-18">Haitham Al-Dukhin</h6>
+                      <h6 className="fz-18">Rajesh Kothari</h6>
                       <span className="p-color opacity-8 fz-15 mt-5">
-                        Envato Customer
+                        Owner, Kothari Hyundai
                       </span>
                     </div>
                   </div>
@@ -99,12 +99,12 @@ function Testimonials() {
             <SwiperSlide>
               <div className="item">
                 <div className="cont">
-                  <h6 className="sub-title mb-15">Design Quality</h6>
+                  <h6 className="sub-title mb-15">Branding &amp; Content</h6>
                   <div className="text">
                     <p>
-                      “ I have been hiring people in this space for a number of
-                      years and I have never seen this level of professionalism.
-                      ”
+                      “ From our logo to every Instagram reel, CreativeMind gave
+                      our brand a premium identity. Our followers and orders
+                      keep growing. ”
                     </p>
                   </div>
                 </div>
@@ -116,9 +116,9 @@ function Testimonials() {
                       </div>
                     </div>
                     <div className="ml-20">
-                      <h6 className="fz-18">Haitham Al-Dukhin</h6>
+                      <h6 className="fz-18">Priya Nair</h6>
                       <span className="p-color opacity-8 fz-15 mt-5">
-                        Envato Customer
+                        Founder, House Of Gulab
                       </span>
                     </div>
                   </div>
@@ -128,12 +128,12 @@ function Testimonials() {
             <SwiperSlide>
               <div className="item">
                 <div className="cont">
-                  <h6 className="sub-title mb-15">Design Quality</h6>
+                  <h6 className="sub-title mb-15">Website &amp; SEO</h6>
                   <div className="text">
                     <p>
-                      “ I have been hiring people in this space for a number of
-                      years and I have never seen this level of professionalism.
-                      ”
+                      “ They rebuilt our website — it now loads in seconds and
+                      ranks on the first page of Google. A professional and
+                      reliable team. ”
                     </p>
                   </div>
                 </div>
@@ -145,9 +145,9 @@ function Testimonials() {
                       </div>
                     </div>
                     <div className="ml-20">
-                      <h6 className="fz-18">Haitham Al-Dukhin</h6>
+                      <h6 className="fz-18">Amit Deshmukh</h6>
                       <span className="p-color opacity-8 fz-15 mt-5">
-                        Envato Customer
+                        Director, Deshmukh Enterprises
                       </span>
                     </div>
                   </div>

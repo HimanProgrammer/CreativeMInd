@@ -25,8 +25,10 @@ export default function Navbar() {
     { href: '/page-about', label: 'ABOUT' },
     { href: '/page-services', label: 'SERVICES', dropdown: [
       { href: '/page-services', label: 'All Services' },
+      { href: '/service-web-development', label: 'Website Development' },
+      { href: '/service-app-development', label: 'App Development' },
+      { href: '/service-seo', label: 'SEO Services' },
       { href: '/service-social-media', label: 'Social Media Marketing' },
-      { href: '/page-services-details', label: 'Services Details' },
     ]},
     { href: '/portfolio-masonry', label: 'PORTFOLIO' },
     { href: '/blog-grid-3column', label: 'BLOG', dropdown: [

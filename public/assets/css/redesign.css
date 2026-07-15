@@ -311,11 +311,11 @@ body.redesign {
   display: inline-flex;
   align-items: center;
   background: var(--dark);
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
 }
 .rd-navbar .rd-logo img {
-  height: 36px;
+  height: 34px;
   width: auto;
   display: block;
 }

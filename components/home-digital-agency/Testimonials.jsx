@@ -51,10 +51,10 @@ function Testimonials() {
                       <div className="content">
                         <div className="text">
                           <p className="fz-30">
-                            I have been hiring people in this space for a number
-                            of years and I have never seen this level of
-                            professionalism. It really feels like you are
-                            working with a team that can get the job done.
+                            The festival creatives and social media content
+                            CreativeMind delivered brought a real jump in our
+                            showroom walk-ins. They understand the Indian market
+                            and our brand perfectly.
                           </p>
                         </div>
                         <div className="info d-flex align-items-center pt-40 mt-40 bord-thin-top">
@@ -64,9 +64,9 @@ function Testimonials() {
                             </div>
                           </div>
                           <div className="ml-20">
-                            <h5>Adam Beckley</h5>
+                            <h5>Rajesh Kothari</h5>
                             <span className="sub-title main-color">
-                              Founder & CEO
+                              Owner, Kothari Hyundai
                             </span>
                           </div>
                         </div>
@@ -78,10 +78,9 @@ function Testimonials() {
                       <div className="content">
                         <div className="text">
                           <p className="fz-30">
-                            I have been hiring people in this space for a number
-                            of years and I have never seen this level of
-                            professionalism. It really feels like you are
-                            working with a team that can get the job done.
+                            From our logo to every Instagram reel, CreativeMind
+                            gave our brand a premium identity. Our followers and
+                            online orders have grown month after month.
                           </p>
                         </div>
                         <div className="info d-flex align-items-center pt-40 mt-40 bord-thin-top">
@@ -91,9 +90,35 @@ function Testimonials() {
                             </div>
                           </div>
                           <div className="ml-20">
-                            <h5>Adam Beckley</h5>
+                            <h5>Priya Nair</h5>
                             <span className="sub-title main-color">
-                              Founder & CEO
+                              Founder, House Of Gulab
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </SwiperSlide>
+                  <SwiperSlide>
+                    <div className="item">
+                      <div className="content">
+                        <div className="text">
+                          <p className="fz-30">
+                            They rebuilt our website and it now loads in seconds
+                            and ranks on the first page of Google. A truly
+                            professional and reliable team to work with.
+                          </p>
+                        </div>
+                        <div className="info d-flex align-items-center pt-40 mt-40 bord-thin-top">
+                          <div>
+                            <div className="fit-img circle">
+                              <img src="/assets/imgs/testim/t3.jpg" alt="" />
+                            </div>
+                          </div>
+                          <div className="ml-20">
+                            <h5>Amit Deshmukh</h5>
+                            <span className="sub-title main-color">
+                              Director, Deshmukh Enterprises
                             </span>
                           </div>
                         </div>

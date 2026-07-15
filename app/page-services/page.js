@@ -8,7 +8,6 @@ import Services from '@/components/home-digital-agency/Services';
 import Intro2 from '@/components/home-digital-agency/Intro2';
 import Numbers from '@/components/page-services/Numbers';
 import Testimonials from '@/components/home-digital-agency/Testimonials';
-import Clients from '@/components/common/Clients';
 import Blog from '@/components/home-digital-agency/Blog';
 
 export const metadata = {
@@ -18,6 +17,7 @@ export const metadata = {
     shortcut: '/assets/imgs/favicon.ico',
     other: generateStylesheetObject([
       '/assets/css/plugins.css',
+      '/assets/css/style.css',
       '/assets/css/redesign.css',
     ]),
   },
@@ -35,7 +35,6 @@ export default function ServicesPage() {
         <Intro2 />
         <Numbers />
         <Testimonials />
-        <Clients />
         <Blog />
       </main>
       <Footer />
