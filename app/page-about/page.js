@@ -9,7 +9,6 @@ import Numbers from '@/components/page-about/Numbers';
 import Services from '@/components/page-about/Services';
 import Team from '@/components/home-modern-studio/Team';
 import Testimonials from '@/components/home-modern-studio/Testimonials';
-import Clients from '@/components/common/Clients';
 import Blog from '@/components/home-main/Blog';
 
 export const metadata = {
@@ -19,6 +18,7 @@ export const metadata = {
     shortcut: '/assets/imgs/favicon.ico',
     other: generateStylesheetObject([
       '/assets/css/plugins.css',
+      '/assets/css/style.css',
       '/assets/css/redesign.css',
     ]),
   },
@@ -37,7 +37,6 @@ export default function AboutPage() {
         <Services />
         <Team />
         <Testimonials />
-        <Clients />
         <Blog />
       </main>
       <Footer />
