@@ -3,8 +3,7 @@ import CustomCursor from '@/components/home-redesign/CustomCursor';
 import ScrollReveal from '@/components/home-redesign/ScrollReveal';
 import Navbar from '@/components/home-redesign/Navbar';
 import Footer from '@/components/home-redesign/Footer';
-import Header from '@/components/blog-details/Header';
-import Blog from '@/components/blog-details/Blog';
+import BlogDetail from '@/components/blog-details/BlogDetail';
 
 export const metadata = {
   title: 'Blog Details - CreativeMind IT Solutions',
@@ -25,8 +24,7 @@ export default function BlogDetailsPage() {
       <ScrollReveal />
       <Navbar />
       <main>
-        <Header />
-        <Blog />
+        <BlogDetail />
       </main>
       <Footer />
     </body>

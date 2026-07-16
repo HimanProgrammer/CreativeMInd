@@ -35,12 +35,12 @@ const TECH = [
 ];
 
 const APPS = [
-  { t: 'Food Delivery App', g: 'linear-gradient(160deg,#fde68a,#fca5a5)' },
-  { t: 'Fintech App', g: 'linear-gradient(160deg,#c4b5fd,#a5b4fc)' },
-  { t: 'Fitness App', g: 'linear-gradient(160deg,#f9a8d4,#c4b5fd)' },
-  { t: 'Healthcare App', g: 'linear-gradient(160deg,#a5f3fc,#bfdbfe)' },
-  { t: 'Ecommerce App', g: 'linear-gradient(160deg,#fdba74,#fca5a5)' },
-  { t: 'Travel App', g: 'linear-gradient(160deg,#7dd3fc,#a5f3fc)' },
+  { t: 'Food Delivery App', kind: 'food', g: 'linear-gradient(160deg,#fde68a,#fca5a5)' },
+  { t: 'Fintech App', kind: 'fintech', g: 'linear-gradient(160deg,#c4b5fd,#a5b4fc)' },
+  { t: 'Fitness App', kind: 'fitness', g: 'linear-gradient(160deg,#f9a8d4,#c4b5fd)' },
+  { t: 'Healthcare App', kind: 'health', g: 'linear-gradient(160deg,#a5f3fc,#bfdbfe)' },
+  { t: 'Ecommerce App', kind: 'shop', g: 'linear-gradient(160deg,#fdba74,#fca5a5)' },
+  { t: 'Travel App', kind: 'travel', g: 'linear-gradient(160deg,#7dd3fc,#a5f3fc)' },
 ];
 
 const REVIEWS = [
@@ -125,13 +125,161 @@ function HeroPhone() {
   );
 }
 
+function FoodScreen() {
+  return (
+    <>
+      <div style={S.miniTopRow}>
+        <span style={S.miniPill}>🛵 20 min</span>
+        <span style={S.miniPillGhost}>★ 4.8</span>
+      </div>
+      <div style={S.miniFoodItem}>
+        <div style={S.miniFoodImg}>🍕</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={S.miniLineTitle}>Margherita Pizza</div>
+          <div style={S.miniLineSub}>Free delivery</div>
+        </div>
+        <div style={S.miniPrice}>$12.99</div>
+      </div>
+      <div style={S.miniFoodItem}>
+        <div style={S.miniFoodImg}>🍔</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={S.miniLineTitle}>Cheese Burger</div>
+          <div style={S.miniLineSub}>Combo + fries</div>
+        </div>
+        <div style={S.miniPrice}>$8.50</div>
+      </div>
+      <div style={S.miniActionBtn}>Order Now</div>
+    </>
+  );
+}
+
+function FintechScreen() {
+  return (
+    <>
+      <div style={S.miniTopRow}>
+        <span style={S.miniFinLabel}>Total Balance</span>
+        <span style={{ fontSize: 11 }}>👁</span>
+      </div>
+      <div style={S.miniFinBalance}>$24,850.00</div>
+      <svg viewBox="0 0 140 34" style={{ width: '100%', height: 30, marginBottom: 8 }}>
+        <path d="M0,28 C15,26 22,10 38,16 C54,22 62,4 78,10 C94,16 102,6 116,8 C124,9 132,4 140,2"
+          fill="none" stroke="#fff" strokeWidth="2" opacity="0.95" />
+      </svg>
+      <div style={S.miniTxnRow}>
+        <span style={{ fontSize: 13 }}>💰</span>
+        <span style={S.miniTxnName}>Salary</span>
+        <span style={S.miniTxnPos}>+$3,650</span>
+      </div>
+      <div style={S.miniTxnRow}>
+        <span style={{ fontSize: 13 }}>🛍️</span>
+        <span style={S.miniTxnName}>Shopping</span>
+        <span style={S.miniTxnNeg}>-$120</span>
+      </div>
+    </>
+  );
+}
+
+function FitnessScreen() {
+  const bars = [40, 65, 50, 80, 60, 90, 45];
+  return (
+    <>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+        <div style={S.miniRing}>
+          <span style={{ fontSize: 10, fontWeight: 800, color: '#fff' }}>72%</span>
+        </div>
+        <div>
+          <div style={S.miniStepsNum}>8,240</div>
+          <div style={S.miniLineSub}>steps today</div>
+        </div>
+      </div>
+      <div style={S.miniBarsRow}>
+        {bars.map((h, i) => <div key={i} style={{ ...S.miniBar, height: h * 0.42 }} />)}
+      </div>
+      <div style={S.miniActionBtn}>View Workout</div>
+    </>
+  );
+}
+
+function HealthScreen() {
+  const days = ['M', 'T', 'W', 'T', 'F'];
+  return (
+    <>
+      <div style={S.miniDocCard}>
+        <div style={S.miniDocAvatar}>👩‍⚕️</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={S.miniLineTitle}>Dr. Sarah Lee</div>
+          <div style={S.miniLineSub}>Cardiologist</div>
+        </div>
+      </div>
+      <div style={S.miniCalRow}>
+        {days.map((d, i) => (
+          <div key={i} style={{ ...S.miniCalDay, ...(i === 3 ? S.miniCalDayActive : {}) }}>{d}</div>
+        ))}
+      </div>
+      <div style={S.miniTxnRow}>
+        <span style={{ fontSize: 13 }}>🕒</span>
+        <span style={S.miniTxnName}>Checkup</span>
+        <span style={S.miniLineSub}>10:30 AM</span>
+      </div>
+      <div style={S.miniActionBtn}>Book Appointment</div>
+    </>
+  );
+}
+
+function ShopScreen() {
+  const items = [['👟', '$64'], ['🎧', '$89'], ['👜', '$120'], ['⌚', '$210']];
+  return (
+    <>
+      <div style={S.miniShopGrid}>
+        {items.map(([e, p], i) => (
+          <div key={i} style={S.miniShopTile}>
+            <div style={S.miniShopEmoji}>{e}</div>
+            <div style={S.miniShopPrice}>{p}</div>
+          </div>
+        ))}
+      </div>
+      <div style={S.miniActionBtn}>🛒 Add to Cart</div>
+    </>
+  );
+}
+
+function TravelScreen() {
+  return (
+    <>
+      <div style={S.miniTravelHero}>
+        <span style={{ fontSize: 20 }}>🏝️</span>
+        <div style={S.miniLineTitle}>Bali, Indonesia</div>
+        <div style={S.miniLineSub}>4.9 ★ · 320 stays</div>
+      </div>
+      <div style={S.miniTxnRow}>
+        <span style={{ fontSize: 13 }}>✈️</span>
+        <span style={S.miniTxnName}>JFK → DPS</span>
+        <span style={S.miniPrice}>$540</span>
+      </div>
+      <div style={S.miniActionBtn}>Book Trip</div>
+    </>
+  );
+}
+
+const MINI_SCREENS = {
+  food: FoodScreen,
+  fintech: FintechScreen,
+  fitness: FitnessScreen,
+  health: HealthScreen,
+  shop: ShopScreen,
+  travel: TravelScreen,
+};
+
 function MiniPhone({ app }) {
+  const Screen = MINI_SCREENS[app.kind];
   return (
     <div style={S.appCard}>
       <div style={{ ...S.miniPhone, background: app.g }}>
         <div style={S.miniNotch} />
-        <div style={S.miniHeader} />
-        {[0, 1, 2].map(i => <div key={i} style={S.miniRow} />)}
+        <div style={S.miniOverlay} />
+        <div style={S.miniScreenBody}>
+          {Screen ? <Screen /> : null}
+        </div>
       </div>
       <div style={S.appLabel}>{app.t}</div>
     </div>
@@ -393,10 +541,47 @@ const S = {
   appsGrid: { display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: 16 },
   appCard: { background: '#fff', border: '1px solid #eee', borderRadius: 18, padding: 14, textAlign: 'center', boxShadow: '0 6px 18px rgba(20,20,46,0.04)' },
   miniPhone: { position: 'relative', height: 200, borderRadius: 22, overflow: 'hidden', marginBottom: 12, padding: 12 },
-  miniNotch: { position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)', width: 40, height: 5, background: 'rgba(255,255,255,0.6)', borderRadius: 4 },
-  miniHeader: { marginTop: 18, height: 40, background: 'rgba(255,255,255,0.55)', borderRadius: 10, marginBottom: 10 },
-  miniRow: { height: 26, background: 'rgba(255,255,255,0.4)', borderRadius: 8, marginBottom: 8 },
+  miniNotch: { position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)', width: 40, height: 5, background: 'rgba(255,255,255,0.6)', borderRadius: 4, zIndex: 3 },
+  miniOverlay: { position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(15,15,35,0.05) 0%, rgba(15,15,35,0.32) 100%)', zIndex: 0 },
   appLabel: { fontSize: 13.5, fontWeight: 800, color: INK },
+
+  /* mini app screen content */
+  miniScreenBody: { position: 'relative', zIndex: 1, marginTop: 18, textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0, height: 'calc(100% - 18px)' },
+  miniTopRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 },
+  miniPill: { fontSize: 8.5, fontWeight: 700, color: '#fff', background: 'rgba(255,255,255,0.22)', borderRadius: 20, padding: '3px 7px' },
+  miniPillGhost: { fontSize: 8.5, fontWeight: 700, color: '#fff', opacity: 0.9 },
+  miniLineTitle: { fontSize: 10.5, fontWeight: 800, color: INK, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
+  miniLineSub: { fontSize: 8.5, color: MUTE },
+  miniPrice: { fontSize: 10, fontWeight: 800, color: PURPLE, whiteSpace: 'nowrap' },
+  miniActionBtn: { marginTop: 'auto', background: '#fff', color: PURPLE, fontSize: 9.5, fontWeight: 800, textAlign: 'center', borderRadius: 20, padding: '7px 6px', boxShadow: '0 4px 10px rgba(0,0,0,0.12)' },
+
+  miniFoodItem: { display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.9)', borderRadius: 10, padding: '5px 7px' },
+  miniFoodImg: { width: 24, height: 24, borderRadius: 7, background: '#fff5e0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, flexShrink: 0 },
+
+  miniFinLabel: { fontSize: 9, color: 'rgba(255,255,255,0.85)', fontWeight: 600 },
+  miniFinBalance: { fontSize: 17, fontWeight: 900, color: '#fff', marginBottom: 2 },
+  miniTxnRow: { display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.9)', borderRadius: 10, padding: '5px 7px' },
+  miniTxnName: { flex: 1, fontSize: 9.5, fontWeight: 700, color: INK, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
+  miniTxnPos: { fontSize: 9.5, fontWeight: 800, color: '#16a34a' },
+  miniTxnNeg: { fontSize: 9.5, fontWeight: 800, color: '#ef4444' },
+
+  miniRing: { width: 40, height: 40, borderRadius: '50%', background: `conic-gradient(#fff 0% 72%, rgba(255,255,255,0.28) 72% 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  miniStepsNum: { fontSize: 15, fontWeight: 900, color: '#fff' },
+  miniBarsRow: { display: 'flex', alignItems: 'flex-end', gap: 4, height: 38, background: 'rgba(255,255,255,0.18)', borderRadius: 10, padding: '0 6px' },
+  miniBar: { flex: 1, minWidth: 4, background: '#fff', borderRadius: 3 },
+
+  miniDocCard: { display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(255,255,255,0.9)', borderRadius: 10, padding: '6px 7px' },
+  miniDocAvatar: { width: 26, height: 26, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 },
+  miniCalRow: { display: 'flex', gap: 4, justifyContent: 'space-between' },
+  miniCalDay: { flex: 1, textAlign: 'center', fontSize: 8.5, fontWeight: 700, color: '#fff', background: 'rgba(255,255,255,0.22)', borderRadius: 6, padding: '4px 0' },
+  miniCalDayActive: { background: '#fff', color: PURPLE },
+
+  miniShopGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 },
+  miniShopTile: { background: 'rgba(255,255,255,0.92)', borderRadius: 9, padding: '6px 4px', textAlign: 'center' },
+  miniShopEmoji: { fontSize: 15 },
+  miniShopPrice: { fontSize: 9, fontWeight: 800, color: INK, marginTop: 1 },
+
+  miniTravelHero: { background: 'rgba(255,255,255,0.16)', borderRadius: 10, padding: '8px 8px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 1 },
 
   revGrid: { display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22, marginBottom: 40 },
   revCard: { background: '#fff', border: '1px solid #eee', borderRadius: 18, padding: 24, boxShadow: '0 8px 24px rgba(20,20,46,0.05)' },

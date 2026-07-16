@@ -13,6 +13,7 @@ export const metadata = {
     shortcut: '/assets/imgs/favicon.ico',
     other: generateStylesheetObject([
       '/assets/css/plugins.css',
+      '/assets/css/style.css',
       '/assets/css/redesign.css',
     ]),
   },
