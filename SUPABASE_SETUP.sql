@@ -12,8 +12,14 @@ CREATE TABLE IF NOT EXISTS portfolio_items (
   thumbnail_url TEXT,
   file_name TEXT,
   file_size BIGINT,
+  video_url TEXT,
+  website_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- Safe to re-run on an existing table:
+ALTER TABLE portfolio_items ADD COLUMN IF NOT EXISTS video_url TEXT;
+ALTER TABLE portfolio_items ADD COLUMN IF NOT EXISTS website_url TEXT;
+ALTER TABLE portfolio_items ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
 ALTER TABLE portfolio_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read portfolio" ON portfolio_items FOR SELECT USING (true);
 CREATE POLICY "Admin insert portfolio" ON portfolio_items FOR INSERT WITH CHECK (auth.role() = 'authenticated');

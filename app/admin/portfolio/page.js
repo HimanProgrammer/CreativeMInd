@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 
-const CATEGORIES = ['General', 'Web Design', 'Mobile App', 'Branding', 'UI/UX', 'Logo', 'Social Media', 'Photography'];
+const CATEGORIES = ['General', 'Website Design', 'Web Design', 'Mobile App', 'Branding', 'UI/UX', 'Logo', 'Social Media', 'Photography'];
 
 const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90"><rect width="100%" height="100%" fill="#2a2a3e"/><text x="50%" y="50%" fill="#666" font-size="11" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">No image</text></svg>'
@@ -385,7 +385,13 @@ export default function AdminPortfolio() {
 
   async function handleSaveEdit() {
     if (!editItem) return;
-    const update = { title: editItem.title, category: editItem.category, video_url: editItem.video_url || null };
+    const update = {
+      title: editItem.title,
+      category: editItem.category,
+      video_url: editItem.video_url || null,
+      website_url: editItem.website_url || null,
+      tags: Array.isArray(editItem.tags) ? editItem.tags : [],
+    };
     await supabase.from('portfolio_items').update(update).eq('id', editItem.id);
     setItems(prev => prev.map(i => i.id === editItem.id ? { ...i, ...update } : i));
     setEditItem(null);
@@ -547,6 +553,16 @@ export default function AdminPortfolio() {
                         ▶
                       </a>
                     )}
+                    {Array.isArray(item.tags) && item.tags.length > 0 && (
+                      <div style={{ position: 'absolute', bottom: 8, left: 8, display: 'flex', flexWrap: 'wrap', gap: 4, maxWidth: 'calc(100% - 40px)' }}>
+                        {item.tags.slice(0, 3).map((t, i) => (
+                          <span key={i} style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 20, background: 'rgba(108,99,255,0.85)', color: '#fff', backdropFilter: 'blur(4px)' }}>#{t}</span>
+                        ))}
+                        {item.tags.length > 3 && (
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 20, background: 'rgba(0,0,0,0.6)', color: '#ccc' }}>+{item.tags.length - 3}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -612,6 +628,40 @@ export default function AdminPortfolio() {
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
 
+            <label style={S.label}>Tags <span style={{ color: '#555', fontWeight: 400, textTransform: 'none', fontSize: 11 }}>(press Enter or comma to add)</span></label>
+            <div style={S.tagBox}>
+              {(editItem.tags || []).map((t, i) => (
+                <span key={`${t}-${i}`} style={S.tagChip}>
+                  {t}
+                  <button
+                    type="button"
+                    onClick={() => setEditItem(p => ({ ...p, tags: (p.tags || []).filter((_, j) => j !== i) }))}
+                    style={S.tagX}
+                    aria-label={`Remove ${t}`}
+                  >×</button>
+                </span>
+              ))}
+              <input
+                style={S.tagInput}
+                placeholder={(editItem.tags || []).length ? 'Add another…' : 'e.g. festival, logo, banner'}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    const val = e.target.value.trim().replace(/,$/, '');
+                    if (!val) return;
+                    setEditItem(p => {
+                      const cur = p.tags || [];
+                      if (cur.some(x => x.toLowerCase() === val.toLowerCase())) return p;
+                      return { ...p, tags: [...cur, val] };
+                    });
+                    e.target.value = '';
+                  } else if (e.key === 'Backspace' && !e.target.value) {
+                    setEditItem(p => ({ ...p, tags: (p.tags || []).slice(0, -1) }));
+                  }
+                }}
+              />
+            </div>
+
             <label style={S.label}>Video Link <span style={{ color: '#555', fontWeight: 400, textTransform: 'none', fontSize: 11 }}>(YouTube / Vimeo — optional)</span></label>
             <input
               style={S.input}
@@ -622,6 +672,19 @@ export default function AdminPortfolio() {
             {editItem.video_url && (
               <p style={{ color: '#6c63ff', fontSize: 12, margin: '-12px 0 16px', display: 'flex', alignItems: 'center', gap: 6 }}>
                 🎬 <a href={editItem.video_url} target="_blank" rel="noreferrer" style={{ color: '#6c63ff' }}>Preview link ↗</a>
+              </p>
+            )}
+
+            <label style={S.label}>Website Link <span style={{ color: '#555', fontWeight: 400, textTransform: 'none', fontSize: 11 }}>(live site — shows its home page &amp; opens in a new tab)</span></label>
+            <input
+              style={S.input}
+              value={editItem.website_url || ''}
+              onChange={e => setEditItem(p => ({ ...p, website_url: e.target.value }))}
+              placeholder="https://example.com"
+            />
+            {editItem.website_url && (
+              <p style={{ color: '#22c55e', fontSize: 12, margin: '-12px 0 16px', display: 'flex', alignItems: 'center', gap: 6 }}>
+                🌐 <a href={editItem.website_url} target="_blank" rel="noreferrer" style={{ color: '#22c55e' }}>Open site ↗</a>
               </p>
             )}
 
@@ -758,10 +821,14 @@ const SQL_SETUP = `CREATE TABLE IF NOT EXISTS portfolio_items (
   file_name TEXT,
   file_size BIGINT,
   video_url TEXT,
+  website_url TEXT,
+  tags TEXT[] DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE portfolio_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE portfolio_items ADD COLUMN IF NOT EXISTS video_url TEXT;
+ALTER TABLE portfolio_items ADD COLUMN IF NOT EXISTS website_url TEXT;
+ALTER TABLE portfolio_items ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
 CREATE POLICY IF NOT EXISTS "Public read portfolio" ON portfolio_items FOR SELECT USING (true);
 CREATE POLICY IF NOT EXISTS "Admin insert portfolio" ON portfolio_items FOR INSERT WITH CHECK (true);
 CREATE POLICY IF NOT EXISTS "Admin update portfolio" ON portfolio_items FOR UPDATE USING (true);
@@ -807,4 +874,8 @@ const S = {
   modal: { background: '#111127', border: '1px solid #333', borderRadius: 16, padding: 28, width: '100%', maxWidth: 480 },
   label: { display: 'block', color: '#888', fontSize: 12, fontWeight: 600, letterSpacing: '0.05em', marginBottom: 6, marginTop: 16 },
   input: { width: '100%', padding: '10px 14px', background: '#0d0d1a', border: '1px solid #333', borderRadius: 8, color: '#fff', fontSize: 14, outline: 'none', boxSizing: 'border-box' },
+  tagBox: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 6, padding: '8px 10px', background: '#0d0d1a', border: '1px solid #333', borderRadius: 8, marginBottom: 16, minHeight: 44 },
+  tagChip: { display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 6px 4px 10px', background: 'rgba(108,99,255,0.15)', border: '1px solid rgba(108,99,255,0.3)', borderRadius: 20, color: '#a5b4fc', fontSize: 12, fontWeight: 600 },
+  tagX: { background: 'none', border: 'none', color: '#a5b4fc', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: 0, display: 'flex' },
+  tagInput: { flex: 1, minWidth: 120, background: 'transparent', border: 'none', outline: 'none', color: '#fff', fontSize: 13, padding: '4px 2px' },
 };

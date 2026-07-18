@@ -1,8 +1,12 @@
 'use client';
 import React, { useEffect, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { supabase } from '@/lib/supabase';
 
 const ORANGE = '#f05a28';
+
+// Filters that always appear, even before any item is tagged with them.
+const PINNED_CATEGORIES = ['Website Design'];
 
 const isShort = (url) => url && url.includes('/shorts/');
 
@@ -16,14 +20,20 @@ function hqUrl(url) {
   return url || '';
 }
 
+function hostOf(url) {
+  try { return new URL(url).hostname.replace(/^www\./, ''); }
+  catch { return (url || '').replace(/^https?:\/\//, '').replace(/\/.*$/, ''); }
+}
+
 export default function Portfolio() {
   const [allItems, setAllItems]     = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(PINNED_CATEGORIES);
   const [active, setActive]         = useState('All');
   const [hovered, setHovered]       = useState(null);
   const [playing, setPlaying]       = useState(null);
   const [animating, setAnimating]   = useState(false);
   const [loaded, setLoaded]         = useState(false);
+  const [lightIdx, setLightIdx]     = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -32,7 +42,7 @@ export default function Portfolio() {
       try {
         const { data, error } = await supabase
           .from('portfolio_items')
-          .select('id,title,category,image_url,thumbnail_url,video_url,file_size')
+          .select('id,title,category,image_url,thumbnail_url,video_url,website_url,file_size')
           .order('created_at', { ascending: false })
           .abortSignal(controller.signal);
         clearTimeout(timeout);
@@ -40,10 +50,12 @@ export default function Portfolio() {
           const valid = data.filter(i =>
             (i.image_url && i.image_url.startsWith('http')) ||
             (i.thumbnail_url && i.thumbnail_url.startsWith('http')) ||
-            i.video_url
+            i.video_url || i.website_url
           );
           setAllItems(valid);
-          setCategories([...new Set(valid.map(i => i.category).filter(Boolean))]);
+          const found = [...new Set(valid.map(i => i.category).filter(Boolean))];
+          const pinned = PINNED_CATEGORIES.filter(c => !found.includes(c));
+          setCategories([...found, ...pinned]);
         }
       } catch { clearTimeout(timeout); }
       finally { setLoaded(true); }
@@ -57,8 +69,36 @@ export default function Portfolio() {
     setTimeout(() => { setActive(cat); setAnimating(false); }, 200);
   }, [active]);
 
-  const filtered = active === 'All' ? allItems : allItems.filter(i => i.category === active);
+  // Websites only appear under their own category filter, never in "All".
+  const filtered = active === 'All'
+    ? allItems.filter(i => !i.website_url)
+    : allItems.filter(i => i.category === active);
   const allCats  = ['All', ...categories];
+
+  const closeLb = useCallback(() => setLightIdx(null), []);
+  const stepLb  = useCallback((dir) => {
+    setLightIdx(i => (i === null ? i : (i + dir + filtered.length) % filtered.length));
+  }, [filtered.length]);
+
+  // Lightbox: keyboard nav + lock background scroll while open
+  useEffect(() => {
+    if (lightIdx === null) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape')     closeLb();
+      if (e.key === 'ArrowRight') stepLb(1);
+      if (e.key === 'ArrowLeft')  stepLb(-1);
+    };
+    window.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [lightIdx, closeLb, stepLb]);
+
+  // Close the lightbox if the filter changes underneath it
+  useEffect(() => { setLightIdx(null); }, [active]);
 
   return (
     <section style={S.section}>
@@ -139,9 +179,30 @@ export default function Portfolio() {
               onMouseEnter={() => setHovered(item.id)}
               onMouseLeave={() => setHovered(null)}
             >
-              <div style={S.pinInner}>
-                {/* ── Playing: inline YouTube embed ── */}
-                {playing === item.id && item.video_url ? (() => {
+              <div
+                style={{ ...S.pinInner, cursor: playing === item.id ? 'default' : (item.website_url ? 'pointer' : 'zoom-in') }}
+                onClick={() => {
+                  if (playing === item.id) return;
+                  if (item.website_url) window.open(item.website_url, '_blank', 'noopener,noreferrer');
+                  else setLightIdx(idx);
+                }}
+                title={item.website_url ? `Open ${item.website_url} in a new tab` : undefined}
+              >
+                {/* ── Website: link card (no screenshot) ── */}
+                {item.website_url ? (
+                  <div style={S.webCard}>
+                    <div style={S.webIcon}>🌐</div>
+                    <div style={S.webTitle}>{item.title || hostOf(item.website_url)}</div>
+                    <div style={S.webHost}>{hostOf(item.website_url)}</div>
+                    {item.category && <span style={S.webCatPill}>{item.category}</span>}
+                    <span style={S.webBtn}>
+                      Visit Website
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginLeft: 6 }}>
+                        <path d="M7 17L17 7M17 7H7M17 7v10" />
+                      </svg>
+                    </span>
+                  </div>
+                ) : playing === item.id && item.video_url ? (() => {
                   const ytId   = getYtId(item.video_url);
                   const short  = isShort(item.video_url);
                   return (
@@ -157,7 +218,7 @@ export default function Portfolio() {
                         allowFullScreen
                       />
                       <button
-                        onClick={() => setPlaying(null)}
+                        onClick={(e) => { e.stopPropagation(); setPlaying(null); }}
                         style={S.closeBtn}
                       >✕</button>
                     </div>
@@ -190,21 +251,27 @@ export default function Portfolio() {
                       </div>
                     )}
 
+                    {/* Website badge */}
+                    {item.website_url && !item.video_url && (
+                      <div style={S.webBadge}>🌐 WEBSITE</div>
+                    )}
+
                     {/* Hover overlay */}
                     <div style={{ ...S.overlay, opacity: hovered === item.id ? 1 : 0 }}>
                       {item.category && <span style={S.catPill}>{item.category}</span>}
                       <div style={S.overlayCenter}>
                         {item.video_url ? (
                           <button
-                            onClick={() => setPlaying(item.id)}
+                            onClick={(e) => { e.stopPropagation(); setPlaying(item.id); }}
                             style={S.actionCircle}
+                            title="Play video"
                           >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill={ORANGE}>
                               <path d="M8 5v14l11-7z" />
                             </svg>
                           </button>
                         ) : (
-                          <div style={S.actionCircle}>
+                          <div style={S.actionCircle} title={item.website_url ? 'Open website' : undefined}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                               stroke={ORANGE} strokeWidth="2.5">
                               <path d="M7 17L17 7M17 7H7M17 7v10" />
@@ -249,7 +316,69 @@ export default function Portfolio() {
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes lbFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes lbZoom { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
+        .lb-backdrop { animation: lbFade 0.2s ease both; }
+        .lb-content  { animation: lbZoom 0.25s cubic-bezier(0.22,1,0.36,1) both; }
+        .lb-btn:hover { background: rgba(255,255,255,0.22) !important; }
+        @media (max-width: 640px) {
+          .lb-nav { width: 40px !important; height: 40px !important; font-size: 22px !important; }
+        }
       `}</style>
+
+      {/* ── Lightbox (portaled to <body> so it escapes any transformed ancestor) ── */}
+      {lightIdx !== null && filtered[lightIdx] && typeof document !== 'undefined' && (() => {
+        const item  = filtered[lightIdx];
+        const ytId  = getYtId(item.video_url);
+        const short = isShort(item.video_url);
+        const src   = item.image_url || item.thumbnail_url ||
+                      (ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : '');
+        return createPortal(
+          <div style={S.lbBackdrop} className="lb-backdrop" onClick={closeLb} role="dialog" aria-modal="true">
+            <button style={S.lbClose} className="lb-btn" onClick={closeLb} aria-label="Close">✕</button>
+
+            {filtered.length > 1 && (
+              <>
+                <button
+                  style={{ ...S.lbNav, left: 24 }} className="lb-btn lb-nav" aria-label="Previous"
+                  onClick={(e) => { e.stopPropagation(); stepLb(-1); }}
+                >‹</button>
+                <button
+                  style={{ ...S.lbNav, right: 24 }} className="lb-btn lb-nav" aria-label="Next"
+                  onClick={(e) => { e.stopPropagation(); stepLb(1); }}
+                >›</button>
+              </>
+            )}
+
+            <div style={S.lbContent} className="lb-content" onClick={(e) => e.stopPropagation()}>
+              {ytId ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`}
+                  style={{
+                    border: 'none', borderRadius: 10, display: 'block', background: '#000',
+                    width: short ? 'min(86vw, 420px)' : 'min(92vw, 1100px)',
+                    aspectRatio: short ? '9/16' : '16/9',
+                    maxHeight: '82vh',
+                  }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <img src={src} alt={item.title || item.category || 'Portfolio'} style={S.lbImg} className="no-anim" />
+              )}
+
+              <div style={S.lbBar}>
+                <div style={{ minWidth: 0 }}>
+                  {item.category && <span style={S.lbCat}>{item.category}</span>}
+                  {item.title && <span style={S.lbTitle}>{item.title}</span>}
+                </div>
+                <span style={S.lbCount}>{lightIdx + 1} / {filtered.length}</span>
+              </div>
+            </div>
+          </div>,
+          document.body
+        );
+      })()}
     </section>
   );
 }
@@ -261,6 +390,50 @@ const S = {
     minHeight: '100vh',
     fontFamily: 'inherit',
   },
+
+  /* Lightbox */
+  lbBackdrop: {
+    position: 'fixed', inset: 0, zIndex: 99999,
+    background: 'rgba(6,6,8,0.94)', backdropFilter: 'blur(6px)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    padding: 24,
+  },
+  lbContent: {
+    position: 'relative', maxWidth: '92vw', maxHeight: '90vh',
+    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
+  },
+  lbImg: {
+    display: 'block', maxWidth: '92vw', maxHeight: '80vh',
+    width: 'auto', height: 'auto', objectFit: 'contain',
+    borderRadius: 10, boxShadow: '0 30px 80px rgba(0,0,0,0.6)',
+  },
+  lbClose: {
+    position: 'absolute', top: 20, right: 24, zIndex: 2,
+    width: 44, height: 44, borderRadius: '50%',
+    background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)',
+    color: '#fff', fontSize: 18, cursor: 'pointer',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    transition: 'background 0.2s',
+  },
+  lbNav: {
+    position: 'absolute', top: '50%', transform: 'translateY(-50%)', zIndex: 2,
+    width: 52, height: 52, borderRadius: '50%',
+    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.18)',
+    color: '#fff', fontSize: 30, lineHeight: 1, cursor: 'pointer',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    paddingBottom: 4, transition: 'background 0.2s',
+  },
+  lbBar: {
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    gap: 16, width: '100%', maxWidth: 1100,
+  },
+  lbCat: {
+    display: 'inline-block', padding: '4px 12px', borderRadius: 20,
+    background: ORANGE, color: '#fff', fontSize: 11, fontWeight: 700,
+    letterSpacing: '0.06em', textTransform: 'uppercase', marginRight: 10,
+  },
+  lbTitle: { color: '#ddd', fontSize: 13 },
+  lbCount: { color: '#888', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' },
 
   /* Header */
   header: {
@@ -357,6 +530,41 @@ const S = {
     color: '#fff', fontSize: 14, cursor: 'pointer',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     zIndex: 10,
+  },
+  webBadge: {
+    position: 'absolute', top: 10, right: 10,
+    background: 'rgba(22,163,74,0.92)', backdropFilter: 'blur(6px)',
+    color: '#fff', fontSize: 9, fontWeight: 800,
+    letterSpacing: '0.1em',
+    padding: '4px 8px', borderRadius: 20,
+    display: 'flex', alignItems: 'center', gap: 4,
+    zIndex: 2,
+  },
+  webCard: {
+    display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
+    gap: 8, padding: '38px 24px',
+    background: 'linear-gradient(160deg, #15151f 0%, #0e1b14 100%)',
+    border: '1px solid rgba(34,197,94,0.25)', borderRadius: 14,
+    minHeight: 200, justifyContent: 'center',
+  },
+  webIcon: {
+    width: 54, height: 54, borderRadius: 16,
+    background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: 26, marginBottom: 4,
+  },
+  webTitle: { color: '#fff', fontSize: 17, fontWeight: 800, letterSpacing: '-0.01em' },
+  webHost: { color: '#7ee2a8', fontSize: 12, wordBreak: 'break-all' },
+  webCatPill: {
+    marginTop: 4, padding: '3px 10px', borderRadius: 20,
+    background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+    color: '#aaa', fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
+  },
+  webBtn: {
+    marginTop: 12, display: 'inline-flex', alignItems: 'center',
+    padding: '9px 20px', borderRadius: 30,
+    background: 'linear-gradient(135deg,#16a34a,#22c55e)', color: '#fff',
+    fontSize: 12.5, fontWeight: 700,
   },
   videoBadge: {
     position: 'absolute', top: 10, right: 10,

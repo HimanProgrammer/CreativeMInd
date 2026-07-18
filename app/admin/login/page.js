@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/authContext';
+import { auth } from '@/lib/firebase';
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -17,12 +18,16 @@ export default function AdminLogin() {
   const [resetSent, setResetSent] = useState(false);
   const { resetPassword } = useAuth();
 
-  const firebaseConfigured = process.env.NEXT_PUBLIC_FIREBASE_AUTH_ENABLED === 'true';
   const [currentDomain, setCurrentDomain] = useState('');
+  // Google sign-in only exists when Firebase Auth was actually initialised
+  // (lib/firebase.js only builds `auth` when NEXT_PUBLIC_FIREBASE_AUTH_ENABLED === 'true').
+  // Resolved after mount so SSR and client markup match.
+  const [googleAvailable, setGoogleAvailable] = useState(false);
 
   // Auto-login on page load
   useEffect(() => {
     setCurrentDomain(window.location.hostname);
+    setGoogleAvailable(Boolean(auth));
     setLoading(true);
     login('admin@creativemind.com', 'admin123')
       .then(() => router.push('/admin/dashboard'))
@@ -63,8 +68,8 @@ export default function AdminLogin() {
         setError('Google sign-in is not enabled in Firebase Console. Use email login with password: admin123');
       } else if (err.code === 'auth/unauthorized-domain') {
         setError(`Add "${currentDomain}" to Firebase → Authentication → Settings → Authorized Domains. Or use email + password: admin123`);
-      } else if (err.code !== 'auth/popup-closed-by-user') {
-        setError(friendlyError(err.code) + ' — Or use password: admin123');
+      } else if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+        setError(friendlyError(err.code) + ' — Or sign in with email + password: admin123');
       }
     } finally {
       setGoogleLoading(false);
@@ -128,16 +133,20 @@ export default function AdminLogin() {
         <h2 style={s.title}>Welcome Back</h2>
         <p style={s.subtitle}>Sign in to CreativeMind Admin</p>
 
-        {/* Google Sign In */}
-        <button onClick={handleGoogleLogin} disabled={googleLoading} style={s.googleBtn}>
-          {googleLoading ? <span style={s.spinner} /> : <GoogleIcon />}
-          {googleLoading ? 'Signing in...' : 'Continue with Google'}
-        </button>
-        <div style={s.divider}>
-          <span style={s.dividerLine} />
-          <span style={s.dividerText}>or sign in with email</span>
-          <span style={s.dividerLine} />
-        </div>
+        {/* Google Sign In — only when Firebase Auth is actually enabled */}
+        {googleAvailable && (
+          <>
+            <button onClick={handleGoogleLogin} disabled={googleLoading} style={s.googleBtn}>
+              {googleLoading ? <span style={s.spinner} /> : <GoogleIcon />}
+              {googleLoading ? 'Signing in...' : 'Continue with Google'}
+            </button>
+            <div style={s.divider}>
+              <span style={s.dividerLine} />
+              <span style={s.dividerText}>or sign in with email</span>
+              <span style={s.dividerLine} />
+            </div>
+          </>
+        )}
 
         {/* Email/Password Form */}
         <form onSubmit={handleLogin} style={s.form}>
@@ -214,9 +223,15 @@ function friendlyError(code) {
     'auth/user-disabled': 'This account has been disabled.',
     'auth/invalid-credential': 'Invalid email or password.',
     'auth/network-request-failed': 'Network error. Check your connection.',
-    'auth/not-configured': 'Firebase is not configured. Use password: admin123',
+    'auth/not-configured': 'Firebase Auth is not enabled. Sign in with password: admin123',
+    'auth/popup-blocked': 'Your browser blocked the sign-in popup. Allow popups and retry.',
+    'auth/operation-not-allowed': 'Google sign-in is not enabled in the Firebase Console.',
+    'auth/unauthorized-domain': 'This domain is not authorized in Firebase → Auth → Settings.',
+    'auth/configuration-not-found': 'Firebase Auth is not set up for this project.',
+    'auth/internal-error': 'Firebase returned an internal error. Check your Firebase config.',
   };
-  return map[code] || 'Something went wrong. Please try again.';
+  // Surface the raw code for anything unmapped so the failure is diagnosable.
+  return map[code] || `Sign-in failed${code ? ` (${code})` : ''}. Please try again.`;
 }
 
 const s = {

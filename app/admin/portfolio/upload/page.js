@@ -6,7 +6,12 @@ import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import { useAuth } from '@/lib/authContext';
 
-const CATEGORIES = ['Web Design', 'UI/UX', 'Branding', 'Mobile App', 'Logo', 'Social Media', 'Photography', 'General'];
+const CATEGORIES = ['Website Design', 'Web Design', 'UI/UX', 'Branding', 'Mobile App', 'Logo', 'Social Media', 'Photography', 'General'];
+
+// Auto-captures a site's home page (free, no API key needed).
+export function shotUrl(url, w = 1200) {
+  return `https://s.wordpress.com/mshots/v1/${encodeURIComponent(url)}?w=${w}`;
+}
 
 async function compressImage(file, maxWidth = 1200, maxHeight = 900, quality = 0.65) {
   return new Promise((resolve) => {
@@ -56,6 +61,7 @@ export default function UploadPortfolio() {
   // Form fields
   const [category,  setCategory]  = useState('General');
   const [videoUrl,  setVideoUrl]  = useState('');
+  const [websiteUrl, setWebsiteUrl] = useState('');
   const [title,     setTitle]     = useState('');
 
   // Selected files
@@ -132,8 +138,39 @@ export default function UploadPortfolio() {
   const totalCount  = images.length + videos.length;
   const canUploadImg = images.length > 0 && !uploading && dbStatus === 'ok';
   const canUploadVid = (videos.length > 0 || videoUrl.trim().length > 0) && !uploading && dbStatus === 'ok';
+  const canAddWebsite = websiteUrl.trim().length > 0 && !uploading && dbStatus === 'ok';
+
+  // ── Add a website entry (home page captured automatically) ─────────
+  async function handleAddWebsite() {
+    const url = websiteUrl.trim();
+    if (!url) return;
+    setUploading(true);
+    setProgress({ done: 0, total: 1, msg: 'Capturing home page & saving...' });
+    try {
+      let host = url;
+      try { host = new URL(url).hostname.replace(/^www\./, ''); } catch { /* keep raw */ }
+      const { error } = await supabase.from('portfolio_items').insert({
+        title: title.trim() || host,
+        category: 'Website Design',
+        image_url: shotUrl(url),
+        thumbnail_url: shotUrl(url, 600),
+        website_url: url,
+      });
+      if (error) {
+        if (error.code === '42P01' || error.message?.includes('relation')) setDbStatus('table_missing');
+        throw error;
+      }
+      setResults(r => [...r, { type: 'website', name: host, status: 'ok', websiteUrl: url, sizeMB: '—' }]);
+      setWebsiteUrl('');
+    } catch (err) {
+      setResults(r => [...r, { type: 'website', name: url, status: 'err', message: err.message }]);
+    }
+    setProgress({ done: 1, total: 1, msg: '' });
+    setUploading(false);
+  }
 
   async function handleUpload(mode = 'all') {
+    if (mode === 'website') return handleAddWebsite();
     const uploadImages = mode === 'all' ? images : mode === 'images' ? images : [];
     const uploadVideos = mode === 'all' ? videos : mode === 'videos' ? videos : [];
     const total = uploadImages.length + uploadVideos.length;
@@ -180,6 +217,7 @@ export default function UploadPortfolio() {
           file_name: mainName,
           file_size: compressed.blob.size,
           video_url: videoUrl.trim() || null,
+          website_url: websiteUrl.trim() || null,
         });
         const timeout = new Promise(res => setTimeout(() => res({ error: new Error('Database timed out — run SQL setup in Supabase') }), 12000));
         const { error: dbErr } = await Promise.race([dbPromise, timeout]);
@@ -323,6 +361,47 @@ export default function UploadPortfolio() {
               />
             </div>
           </div>
+
+          {/* ── Website URL ── */}
+          <div style={{ ...S.fieldsRow, marginTop: 14, alignItems: 'flex-end' }}>
+            <div style={{ ...S.fieldCol, flex: 3 }}>
+              <label style={S.lbl}>🌐 Website URL <span style={S.opt}>(live site — its home page is captured automatically)</span></label>
+              <input
+                type="url"
+                value={websiteUrl}
+                onChange={e => setWebsiteUrl(e.target.value)}
+                placeholder="https://example.com"
+                style={{ ...S.inp, color: websiteUrl ? '#86efac' : undefined }}
+              />
+            </div>
+            <div style={S.fieldCol}>
+              <button
+                onClick={() => handleUpload('website')}
+                disabled={!canAddWebsite}
+                style={{
+                  ...S.uploadBtn,
+                  width: '100%',
+                  background: canAddWebsite ? 'linear-gradient(135deg,#16a34a,#22c55e)' : '#1a1a2e',
+                  color: canAddWebsite ? '#fff' : '#444',
+                  cursor: canAddWebsite ? 'pointer' : 'not-allowed',
+                }}
+              >
+                🌐 Add Website
+              </button>
+            </div>
+          </div>
+          {websiteUrl.trim() && (
+            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <img
+                src={shotUrl(websiteUrl.trim())}
+                alt="Home page preview"
+                style={{ width: 160, height: 100, objectFit: 'cover', objectPosition: 'top', borderRadius: 8, border: '1px solid #222', background: '#111' }}
+              />
+              <span style={{ color: '#666', fontSize: 12 }}>
+                Home page preview — saved to the <strong style={{ color: '#86efac' }}>Website Design</strong> category and opens in a new tab on the site.
+              </span>
+            </div>
+          )}
 
           <div style={S.divider} />
 
