@@ -179,36 +179,6 @@ function Navbar() {
                 <span className="rolling-text">Portfolio</span>
               </a>
             </li>
-            {/* <li
-              onMouseLeave={handleDropdownMouseLeave}
-              onMouseMove={handleDropdownMouseMove}
-              className="nav-item dropdown"
-            >
-              <a
-                className="nav-link dropdown-toggle"
-                data-toggle="dropdown"
-                href="/blog-grid-3column"
-                role="button"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <span className="rolling-text">Blogs</span>
-              </a>
-              <div className="dropdown-menu">
-                <a className="dropdown-item" href="/blog-classic">
-                  Blog Standerd
-                </a>
-                <a className="dropdown-item" href="/blog-grid-sidebar">
-                  Grid With Sidebar
-                </a>
-                <a className="dropdown-item" href="/blog-grid-3column">
-                  Grid Three Column
-                </a>
-                <a className="dropdown-item" href="/blog-details">
-                  Blog Details
-                </a>
-              </div>
-            </li> */}
             <li className="nav-item">
               <a className="nav-link" href="/blog-grid-3column">
                 <span className="rolling-text">Blogs</span>

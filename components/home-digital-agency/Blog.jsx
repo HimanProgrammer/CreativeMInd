@@ -16,7 +16,7 @@ function Blog() {
             </div>
             <div className="ml-auto vi-more">
               <a
-                href="/blog-grid-sidebar"
+                href="/blog-grid-3column"
                 className="butn butn-sm butn-bord radius-30"
               >
                 <span>View All</span>
@@ -30,10 +30,10 @@ function Blog() {
             <div className="item md-mb50">
               <div className="info sub-title p-color d-flex align-items-center mb-20">
                 <div>
-                  <a href="/blog-grid-sidebar">By : Admin</a>
+                  <a href="/blog-grid-3column">By : Admin</a>
                 </div>
                 <div className="ml-30">
-                  <a href="/blog-grid-sidebar">August 14, 2023</a>
+                  <a href="/blog-grid-3column">August 14, 2023</a>
                 </div>
               </div>
               <div className="img fit-img">
@@ -59,10 +59,10 @@ function Blog() {
             <div className="item md-mb50">
               <div className="info sub-title p-color d-flex align-items-center mb-20">
                 <div>
-                  <a href="/blog-grid-sidebar">By : Admin</a>
+                  <a href="/blog-grid-3column">By : Admin</a>
                 </div>
                 <div className="ml-30">
-                  <a href="/blog-grid-sidebar">August 14, 2023</a>
+                  <a href="/blog-grid-3column">August 14, 2023</a>
                 </div>
               </div>
               <div className="img fit-img">
@@ -88,10 +88,10 @@ function Blog() {
             <div className="item">
               <div className="info sub-title p-color d-flex align-items-center mb-20">
                 <div>
-                  <a href="/blog-grid-sidebar">By : Admin</a>
+                  <a href="/blog-grid-3column">By : Admin</a>
                 </div>
                 <div className="ml-30">
-                  <a href="/blog-grid-sidebar">August 14, 2023</a>
+                  <a href="/blog-grid-3column">August 14, 2023</a>
                 </div>
               </div>
               <div className="img fit-img">

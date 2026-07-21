@@ -29,7 +29,7 @@ function Footer() {
               <ul className="rest fz-14 opacity-7">
                 <li className="mb-15"><a href="/page-about">About</a></li>
                 <li className="mb-15"><a href="/page-services">Services</a></li>
-                <li className="mb-15"><a href="/blog-grid-sidebar">Blog</a></li>
+                <li className="mb-15"><a href="/blog-grid-3column">Blog</a></li>
                 <li className="mb-15"><a href="/page-contact">Contact</a></li>
                 <li><a href="/privacy-policy">Privacy Policy</a></li>
               </ul>

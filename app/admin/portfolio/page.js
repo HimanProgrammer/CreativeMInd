@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/authContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import { buildFilterList, matchesFilter } from '@/common/portfolioFilters';
 
 const CATEGORIES = ['General', 'Website Design', 'Web Design', 'Mobile App', 'Branding', 'UI/UX', 'Logo', 'Social Media', 'Photography'];
 
@@ -31,6 +32,8 @@ export default function AdminPortfolio() {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(new Set());
   const [editItem, setEditItem] = useState(null);
+  const [editError, setEditError] = useState('');
+  const [tagsSupported, setTagsSupported] = useState(true);
   const [previewItem, setPreviewItem] = useState(null);
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [view, setView] = useState('grid'); // grid | list
@@ -390,9 +393,32 @@ export default function AdminPortfolio() {
       category: editItem.category,
       video_url: editItem.video_url || null,
       website_url: editItem.website_url || null,
-      tags: Array.isArray(editItem.tags) ? editItem.tags : [],
     };
-    await supabase.from('portfolio_items').update(update).eq('id', editItem.id);
+    // `tags` is optional — only send it if the column exists, so a missing
+    // migration can't silently break saving the other fields.
+    if (tagsSupported && Array.isArray(editItem.tags)) update.tags = editItem.tags;
+
+    const { error } = await supabase.from('portfolio_items').update(update).eq('id', editItem.id);
+    if (error) {
+      // Never update local state on failure — that made the admin look saved
+      // while the database (and the public site) were unchanged.
+      if (/tags/.test(error.message)) {
+        setTagsSupported(false);
+        setEditError('Tags column not set up — saved everything else. Run the SQL in the setup panel to enable tags.');
+        const { error: retryErr } = await supabase
+          .from('portfolio_items')
+          .update({ title: update.title, category: update.category, video_url: update.video_url, website_url: update.website_url })
+          .eq('id', editItem.id);
+        if (!retryErr) {
+          setItems(prev => prev.map(i => i.id === editItem.id ? { ...i, ...update } : i));
+          setEditItem(null);
+        }
+        return;
+      }
+      setEditError(`Could not save: ${error.message}`);
+      return;
+    }
+    setEditError('');
     setItems(prev => prev.map(i => i.id === editItem.id ? { ...i, ...update } : i));
     setEditItem(null);
   }
@@ -410,9 +436,11 @@ export default function AdminPortfolio() {
     else setSelected(new Set(filtered.map(i => i.id)));
   }
 
-  const categories = [...new Set(items.map(i => i.category).filter(Boolean))];
+  // Filter chips mirror the public portfolio page — shared in common/portfolioFilters.js
+  const categories = buildFilterList(items.map(i => i.category));
+
   const filtered = items.filter(i => {
-    const matchCat = filter === 'all' || i.category === filter;
+    const matchCat = filter === 'all' || matchesFilter(i, filter);
     const matchSearch = !search || i.title?.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
@@ -688,9 +716,15 @@ export default function AdminPortfolio() {
               </p>
             )}
 
+            {editError && (
+              <p style={{ color: '#ff6b6b', fontSize: 12.5, background: 'rgba(255,107,107,0.1)', border: '1px solid rgba(255,107,107,0.25)', borderRadius: 8, padding: '9px 12px', margin: '0 0 4px' }}>
+                {editError}
+              </p>
+            )}
+
             <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
               <button onClick={handleSaveEdit} style={{ ...S.addBtn, flex: 1 }}>Save Changes</button>
-              <button onClick={() => setEditItem(null)} style={{ ...S.secondaryBtn, flex: 1 }}>Cancel</button>
+              <button onClick={() => { setEditItem(null); setEditError(''); }} style={{ ...S.secondaryBtn, flex: 1 }}>Cancel</button>
             </div>
           </div>
         </div>

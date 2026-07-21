@@ -13,7 +13,7 @@ function Blog() {
             </h2>
             <div className="ml-auto vi-more">
               <a
-                href="/blog-classic"
+                href="/blog-grid-3column"
                 className="butn butn-sm butn-bord radius-30"
               >
                 <span>View All</span>
@@ -35,10 +35,10 @@ function Blog() {
               <div className="cont pt-40">
                 <div className="info sub-title p-color d-flex align-items-center mb-15">
                   <div>
-                    <a href="/blog-classic">By : Admin</a>
+                    <a href="/blog-grid-3column">By : Admin</a>
                   </div>
                   <div className="ml-30">
-                    <a href="/blog-classic">August 14, 2023</a>
+                    <a href="/blog-grid-3column">August 14, 2023</a>
                   </div>
                 </div>
                 <h4>Design Inspiration: Where to Find Creative Ideas</h4>
@@ -64,10 +64,10 @@ function Blog() {
               <div className="cont pt-40">
                 <div className="info sub-title p-color d-flex align-items-center mb-15">
                   <div>
-                    <a href="/blog-classic">By : Admin</a>
+                    <a href="/blog-grid-3column">By : Admin</a>
                   </div>
                   <div className="ml-30">
-                    <a href="/blog-classic">August 14, 2023</a>
+                    <a href="/blog-grid-3column">August 14, 2023</a>
                   </div>
                 </div>
                 <h4>Typography: Choosing Fonts for Maximum Impact</h4>

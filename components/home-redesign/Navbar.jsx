@@ -31,12 +31,7 @@ export default function Navbar() {
       { href: '/service-social-media', label: 'Social Media Marketing' },
     ]},
     { href: '/portfolio-masonry', label: 'PORTFOLIO' },
-    { href: '/blog-grid-3column', label: 'BLOG', dropdown: [
-      { href: '/blog-classic', label: 'Blog Standard' },
-      { href: '/blog-grid-sidebar', label: 'Grid With Sidebar' },
-      { href: '/blog-grid-3column', label: 'Grid Three Column' },
-      { href: '/blog-details', label: 'Blog Details' },
-    ]},
+    { href: '/blog-grid-3column', label: 'BLOG' },
     { href: '/page-contact', label: 'CONTACT' },
   ];
 

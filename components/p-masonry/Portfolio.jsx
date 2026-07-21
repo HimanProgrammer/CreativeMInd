@@ -2,11 +2,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase } from '@/lib/supabase';
+// Filter definitions are shared with the admin panel so the two always match.
+import { PINNED_CATEGORIES, buildFilterList, matchesFilter } from '@/common/portfolioFilters';
 
 const ORANGE = '#f05a28';
-
-// Filters that always appear, even before any item is tagged with them.
-const PINNED_CATEGORIES = ['Website Design'];
 
 const isShort = (url) => url && url.includes('/shorts/');
 
@@ -35,33 +34,60 @@ export default function Portfolio() {
   const [loaded, setLoaded]         = useState(false);
   const [lightIdx, setLightIdx]     = useState(null);
 
+  // Single fetch, reused for the initial load and every live refresh.
+  const fetchItems = useCallback(async (signal) => {
+    try {
+      let q = supabase
+        .from('portfolio_items')
+        .select('id,title,category,image_url,thumbnail_url,video_url,website_url,file_size')
+        .order('created_at', { ascending: false });
+      if (signal) q = q.abortSignal(signal);
+      const { data, error } = await q;
+      if (error || !data) return;
+      const valid = data.filter(i =>
+        (i.image_url && i.image_url.startsWith('http')) ||
+        (i.thumbnail_url && i.thumbnail_url.startsWith('http')) ||
+        i.video_url || i.website_url
+      );
+      setAllItems(valid);
+      const found = [...new Set(valid.map(i => i.category).filter(Boolean))];
+      const pinned = PINNED_CATEGORIES.filter(c => !found.includes(c));
+      setCategories([...found, ...pinned]);
+    } catch { /* aborted or offline — keep what we have */ }
+  }, []);
+
+  // Initial load
   useEffect(() => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
-    (async () => {
-      try {
-        const { data, error } = await supabase
-          .from('portfolio_items')
-          .select('id,title,category,image_url,thumbnail_url,video_url,website_url,file_size')
-          .order('created_at', { ascending: false })
-          .abortSignal(controller.signal);
-        clearTimeout(timeout);
-        if (!error && data?.length) {
-          const valid = data.filter(i =>
-            (i.image_url && i.image_url.startsWith('http')) ||
-            (i.thumbnail_url && i.thumbnail_url.startsWith('http')) ||
-            i.video_url || i.website_url
-          );
-          setAllItems(valid);
-          const found = [...new Set(valid.map(i => i.category).filter(Boolean))];
-          const pinned = PINNED_CATEGORIES.filter(c => !found.includes(c));
-          setCategories([...found, ...pinned]);
-        }
-      } catch { clearTimeout(timeout); }
-      finally { setLoaded(true); }
-    })();
+    fetchItems(controller.signal).finally(() => {
+      clearTimeout(timeout);
+      setLoaded(true);
+    });
     return () => { clearTimeout(timeout); controller.abort(); };
-  }, []);
+  }, [fetchItems]);
+
+  // Live updates: refresh whenever the admin changes portfolio_items.
+  // Falls back to refetching when the tab regains focus, so this still works
+  // even if Realtime replication isn't enabled on the table.
+  useEffect(() => {
+    const channel = supabase
+      .channel('portfolio_items_live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'portfolio_items' }, () => {
+        fetchItems();
+      })
+      .subscribe();
+
+    const onFocus = () => { if (document.visibilityState === 'visible') fetchItems(); };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+
+    return () => {
+      supabase.removeChannel(channel);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
+  }, [fetchItems]);
 
   const handleFilter = useCallback((cat) => {
     if (cat === active) return;
@@ -72,8 +98,8 @@ export default function Portfolio() {
   // Websites only appear under their own category filter, never in "All".
   const filtered = active === 'All'
     ? allItems.filter(i => !i.website_url)
-    : allItems.filter(i => i.category === active);
-  const allCats  = ['All', ...categories];
+    : allItems.filter(i => matchesFilter(i, active));
+  const allCats  = ['All', ...buildFilterList(categories)];
 
   const closeLb = useCallback(() => setLightIdx(null), []);
   const stepLb  = useCallback((dir) => {
