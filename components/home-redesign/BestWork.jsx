@@ -26,10 +26,11 @@ function shuffle(arr) {
 }
 
 function pickSrc(item) {
-  // Thumbnail first — these tiles are small, so loading full-size originals
-  // would waste a lot of bandwidth on the homepage.
-  if (item.thumbnail_url && item.thumbnail_url.startsWith('http')) return item.thumbnail_url;
+  // Full-size first: thumbnails are only 400x300, which visibly upscales in
+  // these tiles (and doubles again on retina). image_url is already a
+  // compressed WebP, so quality wins here.
   if (item.image_url && item.image_url.startsWith('http')) return item.image_url;
+  if (item.thumbnail_url && item.thumbnail_url.startsWith('http')) return item.thumbnail_url;
   const m = (item.video_url || '').match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
   return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
 }
