@@ -2,6 +2,7 @@
 import './globals.css';
 import Script from 'next/script';
 import GlobalScrollReveal from '@/components/common/GlobalScrollReveal';
+import GoogleAnalytics from '@/components/common/GoogleAnalytics';
 
 export const metadata = {
   title: 'CreativeMind IT Solutions',
@@ -9,7 +10,10 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  const GA_ID = 'G-8REJ0M9YEX';
+  // Set NEXT_PUBLIC_GA_MEASUREMENT_ID in .env.local (and in Vercel env vars).
+  // Fallback = CreativeMind GA4 property 496868533.
+  const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-SETKRT6N43';
+  const ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || 'AW-17350106214';
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -22,19 +26,8 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         />
 
-        {/* Google Analytics 4 */}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_ID}', { page_path: window.location.pathname });
-          `}
-        </Script>
+        {/* Google Analytics 4 + Google Ads (also tracks client-side route changes) */}
+        <GoogleAnalytics gaId={GA_ID} adsId={ADS_ID} />
 
         {/* Facebook Meta Pixel */}
         <Script id="facebook-pixel" strategy="afterInteractive">

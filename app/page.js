@@ -1,5 +1,4 @@
 import generateStylesheetObject from '@/common/generateStylesheetsObject';
-import Script from 'next/script';
 
 import CustomCursor from '@/components/home-redesign/CustomCursor';
 import ScrollReveal from '@/components/home-redesign/ScrollReveal';
@@ -54,23 +53,7 @@ export default function Home() {
 
       <Footer />
 
-      {/* Google Analytics */}
-      <Script
-        strategy="afterInteractive"
-        src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
-      />
-      <Script
-        id="google-analytics"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-17350106214');
-          `,
-        }}
-      />
+      {/* Analytics (GA4 + Google Ads) is loaded once site-wide in app/layout.js */}
     </body>
   );
 }

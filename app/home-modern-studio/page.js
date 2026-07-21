@@ -58,18 +58,8 @@ export default function Home() {
           <Footer />
         </div>
       </div>
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-CL06FFEDQZ"
-        strategy="afterInteractive"
-      />
-      <Script id="gtag-init" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-CL06FFEDQZ');
-        `}
-      </Script>
+      {/* Removed the template's own GA property (G-CL06FFEDQZ) — analytics is
+          loaded site-wide from app/layout.js with our own measurement ID. */}
       <Script
         src="/assets/js/ScrollTrigger.min.js"
         strategy="beforeInteractive"
