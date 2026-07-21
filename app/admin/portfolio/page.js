@@ -9,6 +9,28 @@ import { buildFilterList, matchesFilter } from '@/common/portfolioFilters';
 
 const CATEGORIES = ['General', 'Website Design', 'Web Design', 'Mobile App', 'Branding', 'UI/UX', 'Logo', 'Social Media', 'Photography'];
 
+// Tags offered per category. `auto` are applied automatically when the category
+// is chosen; `more` are one-click suggestions shown underneath.
+const TAG_PRESETS = {
+  'Social Media':   { auto: ['social media', 'post'], more: ['instagram', 'facebook', 'story', 'reel', 'festival', 'greeting', 'promo', 'offer'] },
+  'Website Design': { auto: ['website'],              more: ['landing page', 'ui', 'responsive', 'homepage', 'ecommerce'] },
+  'Web Design':     { auto: ['website'],              more: ['landing page', 'ui', 'responsive'] },
+  'Mobile App':     { auto: ['app'],                  more: ['ios', 'android', 'ui', 'mobile', 'prototype'] },
+  'Branding':       { auto: ['branding'],             more: ['logo', 'identity', 'brand guide', 'stationery', 'packaging'] },
+  'UI/UX':          { auto: ['ui/ux'],                more: ['wireframe', 'prototype', 'dashboard', 'app design'] },
+  'Logo':           { auto: ['logo'],                 more: ['identity', 'monogram', 'wordmark', 'branding'] },
+  'Photography':    { auto: ['photography'],          more: ['product shoot', 'portrait', 'event', 'retouch'] },
+  'General':        { auto: [],                       more: ['print', 'banner', 'flyer', 'brochure', 'poster'] },
+};
+
+const mergeTags = (existing, incoming) => {
+  const out = [...(existing || [])];
+  incoming.forEach(t => {
+    if (!out.some(x => x.toLowerCase() === t.toLowerCase())) out.push(t);
+  });
+  return out;
+};
+
 const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90"><rect width="100%" height="100%" fill="#2a2a3e"/><text x="50%" y="50%" fill="#666" font-size="11" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle">No image</text></svg>'
 );
@@ -36,6 +58,12 @@ export default function AdminPortfolio() {
   const [tagsSupported, setTagsSupported] = useState(true);
   const [previewItem, setPreviewItem] = useState(null);
   const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [bulkMoving, setBulkMoving] = useState(false);
+  const [autoScanning, setAutoScanning] = useState(false);
+  const [autoProgress, setAutoProgress] = useState({ done: 0, total: 0 });
+  const [autoMatches, setAutoMatches] = useState([]);
+  const [autoExcluded, setAutoExcluded] = useState(new Set());
+  const [showAutoModal, setShowAutoModal] = useState(false);
   const [view, setView] = useState('grid'); // grid | list
   const [dupModal, setDupModal] = useState(false);
   const [duplicates, setDuplicates] = useState([]);
@@ -386,6 +414,108 @@ export default function AdminPortfolio() {
     setBulkDeleting(false);
   }
 
+  // ── Auto-detect Social Media posts by image shape ──────────────────
+  // Social creatives are square (1:1), portrait (4:5) or story (9:16).
+  // Anything landscape/wide is left alone.
+  const SOCIAL_MIN_RATIO = 0.5;   // 9:16 story = 0.5625, allow a little slack
+  const SOCIAL_MAX_RATIO = 1.05;  // square, with slack for 1000x1000-ish crops
+
+  function loadDims(url) {
+    return new Promise(resolve => {
+      const img = new window.Image();
+      const done = (v) => { img.onload = img.onerror = null; resolve(v); };
+      img.onload = () => done({ w: img.naturalWidth, h: img.naturalHeight });
+      img.onerror = () => done(null);
+      setTimeout(() => done(null), 15000); // don't hang on a dead URL
+      img.src = url;
+    });
+  }
+
+  async function handleAutoSocial() {
+    // Only consider real graphics that aren't already Social Media / websites.
+    const pool = items.filter(i =>
+      i.category !== 'Social Media' &&
+      !i.website_url &&
+      (i.thumbnail_url || i.image_url)
+    );
+    if (!pool.length) { alert('Nothing left to scan.'); return; }
+
+    setAutoScanning(true);
+    setAutoProgress({ done: 0, total: pool.length });
+    const matches = [];
+    const CONCURRENCY = 8;
+
+    for (let i = 0; i < pool.length; i += CONCURRENCY) {
+      const batch = pool.slice(i, i + CONCURRENCY);
+      const dims = await Promise.all(
+        batch.map(it => loadDims(it.thumbnail_url || it.image_url))
+      );
+      batch.forEach((it, j) => {
+        const d = dims[j];
+        if (!d || !d.w || !d.h) return;
+        const ratio = d.w / d.h;
+        if (ratio >= SOCIAL_MIN_RATIO && ratio <= SOCIAL_MAX_RATIO) {
+          matches.push({ ...it, _ratio: ratio, _dims: `${d.w}×${d.h}` });
+        }
+      });
+      setAutoProgress({ done: Math.min(i + CONCURRENCY, pool.length), total: pool.length });
+    }
+
+    setAutoScanning(false);
+    setAutoMatches(matches);
+    setAutoExcluded(new Set());
+    setShowAutoModal(true);
+  }
+
+  async function applyAutoSocial() {
+    const ids = autoMatches.filter(m => !autoExcluded.has(m.id)).map(m => m.id);
+    if (!ids.length) { setShowAutoModal(false); return; }
+    setBulkMoving(true);
+    const { error } = await supabase
+      .from('portfolio_items')
+      .update({ category: 'Social Media' })
+      .in('id', ids);
+    setBulkMoving(false);
+    if (error) { alert(`Could not apply: ${error.message}`); return; }
+    const idSet = new Set(ids);
+    setItems(prev => prev.map(i => (idSet.has(i.id) ? { ...i, category: 'Social Media' } : i)));
+    setShowAutoModal(false);
+    setAutoMatches([]);
+  }
+
+  // Bulk-assign a category to every selected item.
+  async function handleBulkCategory(category) {
+    if (!selected.size) return;
+    const ids = [...selected];
+    if (!confirm(`Move ${ids.length} selected item${ids.length > 1 ? 's' : ''} to "${category}"?`)) return;
+    setBulkMoving(true);
+    const auto = TAG_PRESETS[category]?.auto || [];
+    const { error } = await supabase
+      .from('portfolio_items')
+      .update({ category })
+      .in('id', ids);
+    if (error) {
+      setBulkMoving(false);
+      alert(`Could not move items: ${error.message}`);
+      return;
+    }
+    // Apply the category's auto tags too (per row, so existing tags are kept).
+    if (tagsSupported && auto.length) {
+      const targets = items.filter(i => selected.has(i.id));
+      const results = await Promise.all(targets.map(it =>
+        supabase.from('portfolio_items')
+          .update({ tags: mergeTags(it.tags, auto) })
+          .eq('id', it.id)
+      ));
+      if (results.some(r => r.error && /tags/.test(r.error.message))) setTagsSupported(false);
+    }
+    setBulkMoving(false);
+    setItems(prev => prev.map(i => (selected.has(i.id)
+      ? { ...i, category, tags: tagsSupported ? mergeTags(i.tags, auto) : i.tags }
+      : i)));
+    setSelected(new Set());
+  }
+
   async function handleSaveEdit() {
     if (!editItem) return;
     const update = {
@@ -460,12 +590,42 @@ export default function AdminPortfolio() {
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
             {selected.size > 0 && (
-              <button onClick={handleBulkDelete} disabled={bulkDeleting} style={S.deleteSelectedBtn}>
-                {bulkDeleting ? 'Deleting...' : `🗑 Delete ${selected.size}`}
-              </button>
+              <>
+                <button
+                  onClick={() => handleBulkCategory('Social Media')}
+                  disabled={bulkMoving}
+                  style={S.socialBtn}
+                  title={`Move ${selected.size} selected into the Social Media category`}
+                >
+                  {bulkMoving ? 'Moving…' : `📱 → Social Media (${selected.size})`}
+                </button>
+                <select
+                  value=""
+                  disabled={bulkMoving}
+                  onChange={e => { if (e.target.value) handleBulkCategory(e.target.value); e.target.value = ''; }}
+                  style={S.bulkSelect}
+                  title="Move selected to another category"
+                >
+                  <option value="">Move to…</option>
+                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+                <button onClick={handleBulkDelete} disabled={bulkDeleting} style={S.deleteSelectedBtn}>
+                  {bulkDeleting ? 'Deleting...' : `🗑 Delete ${selected.size}`}
+                </button>
+              </>
             )}
             {items.length > 0 && (
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                <button
+                  onClick={handleAutoSocial}
+                  disabled={autoScanning || bulkMoving}
+                  style={{ ...S.dupBtn, background: 'rgba(34,197,94,0.12)', borderColor: 'rgba(34,197,94,0.35)', color: '#4ade80' }}
+                  title="Detect square / portrait / story graphics and tag them as Social Media"
+                >
+                  {autoScanning
+                    ? `📱 Scanning ${autoProgress.done}/${autoProgress.total}…`
+                    : '📱 Auto-detect Social'}
+                </button>
                 <button onClick={handleFindDuplicates} disabled={scanning} style={S.dupBtn} title="Fast scan by file size & filename">
                   ⚡ Quick Scan
                 </button>
@@ -642,6 +802,60 @@ export default function AdminPortfolio() {
       </main>
 
       {/* Edit Modal */}
+      {/* ── Auto-detect Social Media: review before applying ── */}
+      {showAutoModal && (
+        <div style={S.modalBg} onClick={() => setShowAutoModal(false)}>
+          <div style={{ ...S.modal, maxWidth: 820, width: '92%' }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ color: '#fff', margin: '0 0 6px' }}>
+              Auto-detected Social Media posts
+            </h3>
+            <p style={{ color: '#888', fontSize: 13, margin: '0 0 18px' }}>
+              Found <strong style={{ color: '#4ade80' }}>{autoMatches.length}</strong> square / portrait / story graphics.
+              Untick any you don&apos;t want moved — nothing changes until you click Apply.
+            </p>
+
+            {autoMatches.length === 0 ? (
+              <p style={{ color: '#666', fontSize: 14, padding: '20px 0' }}>
+                No square or portrait graphics found. Everything scanned was landscape.
+              </p>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(110px,1fr))', gap: 10, maxHeight: '46vh', overflowY: 'auto', paddingRight: 4 }}>
+                {autoMatches.map(m => {
+                  const off = autoExcluded.has(m.id);
+                  return (
+                    <div
+                      key={m.id}
+                      onClick={() => setAutoExcluded(prev => {
+                        const n = new Set(prev);
+                        n.has(m.id) ? n.delete(m.id) : n.add(m.id);
+                        return n;
+                      })}
+                      style={{ cursor: 'pointer', opacity: off ? 0.3 : 1, border: `2px solid ${off ? '#333' : '#22c55e'}`, borderRadius: 8, overflow: 'hidden', position: 'relative' }}
+                      title={off ? 'Click to include' : 'Click to exclude'}
+                    >
+                      <img src={m.thumbnail_url || m.image_url} alt="" style={{ width: '100%', height: 100, objectFit: 'cover', display: 'block' }} />
+                      <div style={{ fontSize: 9, color: '#888', padding: '3px 5px', background: '#0d0d1a' }}>{m._dims}</div>
+                      {off && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>✕</div>}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+              <button
+                onClick={applyAutoSocial}
+                disabled={bulkMoving || autoMatches.length === 0}
+                style={{ ...S.addBtn, flex: 1 }}
+              >
+                {bulkMoving ? 'Applying…' : `Move ${autoMatches.length - autoExcluded.size} to Social Media`}
+              </button>
+              <button onClick={() => setShowAutoModal(false)} style={{ ...S.secondaryBtn, flex: 1 }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {editItem && (
         <div style={S.modalBg} onClick={() => setEditItem(null)}>
           <div style={S.modal} onClick={e => e.stopPropagation()}>
@@ -652,7 +866,16 @@ export default function AdminPortfolio() {
             <input style={S.input} value={editItem.title || ''} onChange={e => setEditItem(p => ({ ...p, title: e.target.value }))} placeholder="Image title" />
 
             <label style={S.label}>Category</label>
-            <select style={S.input} value={editItem.category || 'General'} onChange={e => setEditItem(p => ({ ...p, category: e.target.value }))}>
+            <select
+              style={S.input}
+              value={editItem.category || 'General'}
+              onChange={e => {
+                const cat = e.target.value;
+                // Auto-apply that category's tags (never removes what's there).
+                const auto = TAG_PRESETS[cat]?.auto || [];
+                setEditItem(p => ({ ...p, category: cat, tags: mergeTags(p.tags, auto) }));
+              }}
+            >
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
 
@@ -689,6 +912,38 @@ export default function AdminPortfolio() {
                 }}
               />
             </div>
+
+            {/* Suggestions for the selected category */}
+            {(() => {
+              const cat = editItem.category || 'General';
+              const preset = TAG_PRESETS[cat] || { auto: [], more: [] };
+              const cur = editItem.tags || [];
+              const available = [...preset.auto, ...preset.more]
+                .filter(t => !cur.some(x => x.toLowerCase() === t.toLowerCase()));
+              if (!available.length) return null;
+              return (
+                <div style={{ margin: '-8px 0 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                    <span style={{ color: '#555', fontSize: 11 }}>Suggested for {cat}:</span>
+                    <button
+                      type="button"
+                      onClick={() => setEditItem(p => ({ ...p, tags: mergeTags(p.tags, available) }))}
+                      style={S.addAllBtn}
+                    >+ Add all</button>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {available.map(t => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setEditItem(p => ({ ...p, tags: mergeTags(p.tags, [t]) }))}
+                        style={S.suggestChip}
+                      >+ {t}</button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
 
             <label style={S.label}>Video Link <span style={{ color: '#555', fontWeight: 400, textTransform: 'none', fontSize: 11 }}>(YouTube / Vimeo — optional)</span></label>
             <input
@@ -879,6 +1134,8 @@ const S = {
   addBtn: { padding: '11px 22px', background: 'linear-gradient(135deg,#6c63ff,#e040fb)', borderRadius: 8, color: '#fff', textDecoration: 'none', fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 },
   secondaryBtn: { padding: '11px 22px', background: 'rgba(255,255,255,0.06)', border: '1px solid #333', borderRadius: 8, color: '#ccc', textDecoration: 'none', fontSize: 13, fontWeight: 500, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 },
   deleteSelectedBtn: { padding: '11px 22px', background: 'rgba(255,68,68,0.15)', border: '1px solid rgba(255,68,68,0.3)', borderRadius: 8, color: '#ff6b6b', fontSize: 13, fontWeight: 600, cursor: 'pointer' },
+  socialBtn: { padding: '11px 20px', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.35)', borderRadius: 8, color: '#4ade80', fontSize: 13, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' },
+  bulkSelect: { padding: '11px 14px', background: '#0d0d1a', border: '1px solid #333', borderRadius: 8, color: '#ccc', fontSize: 13, fontWeight: 600, cursor: 'pointer', outline: 'none' },
   dupBtn: { padding: '11px 22px', background: 'rgba(255,165,0,0.12)', border: '1px solid rgba(255,165,0,0.25)', borderRadius: 8, color: '#ffab40', fontSize: 13, fontWeight: 600, cursor: 'pointer' },
   setupBox: { background: '#111127', border: '1px solid #333', borderRadius: 16, padding: '48px 32px', textAlign: 'center', marginBottom: 32 },
   sqlBox: { background: '#0d0d1a', border: '1px solid #222', borderRadius: 10, padding: 20, marginTop: 24, textAlign: 'left' },
@@ -912,4 +1169,6 @@ const S = {
   tagChip: { display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 6px 4px 10px', background: 'rgba(108,99,255,0.15)', border: '1px solid rgba(108,99,255,0.3)', borderRadius: 20, color: '#a5b4fc', fontSize: 12, fontWeight: 600 },
   tagX: { background: 'none', border: 'none', color: '#a5b4fc', cursor: 'pointer', fontSize: 16, lineHeight: 1, padding: 0, display: 'flex' },
   tagInput: { flex: 1, minWidth: 120, background: 'transparent', border: 'none', outline: 'none', color: '#fff', fontSize: 13, padding: '4px 2px' },
+  suggestChip: { padding: '4px 10px', background: 'rgba(255,255,255,0.05)', border: '1px dashed rgba(255,255,255,0.2)', borderRadius: 20, color: '#999', fontSize: 11.5, fontWeight: 600, cursor: 'pointer' },
+  addAllBtn: { padding: '3px 10px', background: 'rgba(108,99,255,0.15)', border: '1px solid rgba(108,99,255,0.3)', borderRadius: 20, color: '#a5b4fc', fontSize: 11, fontWeight: 700, cursor: 'pointer' },
 };
