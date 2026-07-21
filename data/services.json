@@ -1,50 +1,50 @@
 [
   {
+    "title": "Web Developments",
+    "img": "/assets/imgs/serv-icons/4.png",
+    "desc": "High-performance, responsive websites built to engage and convert.",
+    "link": "/service-web-development"
+  },
+  {
+    "title": "App Development",
+    "img": "/assets/imgs/serv-icons/5.png",
+    "desc": "Scalable, modern mobile applications for iOS and Android.",
+    "link": "/service-app-development"
+  },
+  {
+    "title": "SEO Services",
+    "img": "/assets/imgs/serv-icons/3.png",
+    "desc": "Rank higher on Google and grow organic traffic that converts.",
+    "link": "/service-seo"
+  },
+  {
+    "title": "Social Media Marketing",
+    "img": "/assets/imgs/serv-icons/5.png",
+    "desc": "Content and campaigns that turn followers into real customers.",
+    "link": "/service-social-media"
+  },
+  {
     "title": "Digital Product Design",
     "img": "/assets/imgs/serv-icons/3.png",
     "desc": "Crafting seamless, user-focused digital experiences for web and mobile platforms.",
     "link": "/page-services-details"
   },
   {
-    "title": "Web Developments",
-    "img": "/assets/imgs/serv-icons/4.png",
-    "desc": "High-performance, responsive websites built to engage and convert.",
-    "link": "/page-services-details"
-  },
-  {
     "title": "Branding Design",
     "img": "/assets/imgs/serv-icons/5.png",
     "desc": "Visual identities that spark recognition and brand loyalty.",
-    "link": "/page-services-details"
+    "link": "/service-branding"
   },
   {
     "title": "UI-UX Design & Development",
     "img": "/assets/imgs/serv-icons/5.png",
     "desc": "Intuitive interfaces with engaging user experiences that drive results.",
-    "link": "/page-services-details"
+    "link": "/service-ui-ux-design"
   },
   {
-    "title": "App Development",
-    "img": "/assets/imgs/serv-icons/5.png",
-    "desc": "Scalable, modern mobile applications for iOS and Android.",
-    "link": "/page-services-details"
-  },
-  {
-    "title": "Digital Marketing",
-    "img": "/assets/imgs/serv-icons/5.png",
-    "desc": "Data-driven campaigns that increase visibility, traffic, and ROI.",
-    "link": "/page-services-details"
-  },
-  {
-    "title": " Wonderful CGI ADS",
+    "title": "Wonderful CGI ADS",
     "img": "/assets/imgs/serv-icons/5.png",
     "desc": "Cinematic, visually stunning 3D ads that captivate and sell.",
-    "link": "/page-services-details"
-  },
-  {
-    "title": "Marketing Strategy ",
-    "img": "/assets/imgs/serv-icons/5.png",
-    "desc": "Strategic roadmaps to position your brand and scale your growth.",
     "link": "/page-services-details"
   }
 ]

@@ -1,12 +1,14 @@
 import React from 'react';
 
+// `href` points at the dedicated service page where one exists,
+// otherwise at the all-services listing.
 const services = [
-  { icon: 'fas fa-laptop-code', title: 'Web Development', desc: 'High-performance websites built with modern technologies.' },
-  { icon: 'fas fa-mobile-alt', title: 'Mobile App Development', desc: 'Native & cross-platform apps for iOS & Android.' },
-  { icon: 'fas fa-pencil-ruler', title: 'UI/UX Design', desc: 'Beautiful, intuitive and user-centered designs.' },
-  { icon: 'fas fa-bullhorn', title: 'Digital Marketing', desc: 'Data-driven marketing that delivers results.' },
-  { icon: 'fas fa-palette', title: 'Branding & Identity', desc: 'Build a brand that stands out and connects with people.' },
-  { icon: 'fas fa-cloud', title: 'Cloud Solutions', desc: 'Scalable, secure & modern cloud infrastructure.' },
+  { icon: 'fas fa-laptop-code', title: 'Web Development', desc: 'High-performance websites built with modern technologies.', href: '/service-web-development' },
+  { icon: 'fas fa-mobile-alt', title: 'Mobile App Development', desc: 'Native & cross-platform apps for iOS & Android.', href: '/service-app-development' },
+  { icon: 'fas fa-search', title: 'SEO Services', desc: 'Rank higher on Google and grow organic traffic that converts.', href: '/service-seo' },
+  { icon: 'fas fa-bullhorn', title: 'Social Media Marketing', desc: 'Content and campaigns that turn followers into customers.', href: '/service-social-media' },
+  { icon: 'fas fa-pencil-ruler', title: 'UI/UX Design', desc: 'Beautiful, intuitive and user-centered designs.', href: '/service-ui-ux-design' },
+  { icon: 'fas fa-palette', title: 'Branding & Identity', desc: 'Build a brand that stands out and connects with people.', href: '/service-branding' },
 ];
 
 const delays = ['rd-delay-1','rd-delay-2','rd-delay-3','rd-delay-4','rd-delay-5','rd-delay-6'];
@@ -36,7 +38,7 @@ export default function Services() {
                 </div>
                 <h5>{s.title}</h5>
                 <p>{s.desc}</p>
-                <a href="/page-services" className="rd-service-explore">
+                <a href={s.href} className="rd-service-explore">
                   EXPLORE <span>→</span>
                 </a>
               </div>

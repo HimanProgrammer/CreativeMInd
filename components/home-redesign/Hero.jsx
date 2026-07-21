@@ -228,7 +228,7 @@ export default function Hero() {
                   GET FREE CONSULTATION
                   <i className="fas fa-arrow-right"></i>
                 </a>
-                <a href="/portfolio-gallery" className="rd-btn-outline" style={{
+                <a href="/portfolio-masonry" className="rd-btn-outline" style={{
                   display: 'inline-flex', alignItems: 'center', gap: 10,
                   padding: '15px 28px', border: '1.5px solid rgba(240,90,40,0.3)',
                   color: '#f05a28', borderRadius: 12, fontWeight: 700, fontSize: 13,

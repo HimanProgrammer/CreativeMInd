@@ -29,6 +29,8 @@ export default function Navbar() {
       { href: '/service-app-development', label: 'App Development' },
       { href: '/service-seo', label: 'SEO Services' },
       { href: '/service-social-media', label: 'Social Media Marketing' },
+      { href: '/service-ui-ux-design', label: 'UI/UX Design' },
+      { href: '/service-branding', label: 'Branding & Identity' },
     ]},
     { href: '/portfolio-masonry', label: 'PORTFOLIO' },
     { href: '/blog-grid-3column', label: 'BLOG' },

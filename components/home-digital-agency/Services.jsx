@@ -54,9 +54,13 @@ function Services() {
         >
           {data.map((item, i) => (
             <SwiperSlide key={i}>
-              <div
+              {/* The whole card links to its dedicated service page. */}
+              <a
+                href={item.link || '/page-services'}
                 onClick={() => handleActiveSer(i)}
+                onMouseEnter={() => handleActiveSer(i)}
                 className={`item ${activeIndex === i ? 'active' : ''}`}
+                style={{ display: 'block', textDecoration: 'none' }}
               >
                 <div className="icon-img-60">
                   <img src={item.img} alt={`icon-${i}`} />
@@ -70,7 +74,7 @@ function Services() {
                     <span className="ml-auto fz-13">0{i + 1}</span>
                   </div>
                 </div>
-              </div>
+              </a>
             </SwiperSlide>
           ))}
         </Swiper>
