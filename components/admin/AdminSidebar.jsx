@@ -24,7 +24,11 @@ export default function AdminSidebar({ onLogout, userEmail, userName, userPhoto 
     return pathname.startsWith(href);
   };
 
-  const displayName = userName || userEmail;
+  // Google sign-in supplies a real name; email/password accounts often don't,
+  // so fall back to a tidied-up version of the email's local part instead of
+  // printing the same address on both lines.
+  const localPart = (userEmail || '').split('@')[0].replace(/[._-]+/g, ' ').trim();
+  const displayName = userName || localPart || userEmail;
   const avatarLetter = (displayName || 'A')[0].toUpperCase();
 
   return (
@@ -49,8 +53,8 @@ export default function AdminSidebar({ onLogout, userEmail, userName, userPhoto 
             <div style={styles.userAvatar}>{avatarLetter}</div>
           )}
           <div style={{ overflow: 'hidden' }}>
-            <div style={styles.userEmail}>{userName || userEmail}</div>
-            <div style={styles.userRole}>{userEmail}</div>
+            <div style={styles.userEmail} title={displayName}>{displayName}</div>
+            <div style={styles.userRole} title={userEmail}>{userEmail}</div>
           </div>
         </div>
       )}
@@ -148,8 +152,8 @@ const styles = {
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     color: '#fff', fontWeight: 700, fontSize: 13,
   },
-  userEmail: { color: '#ccc', fontSize: 11, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 140 },
-  userRole: { color: '#555', fontSize: 10, marginTop: 1 },
+  userEmail: { color: '#ccc', fontSize: 11, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 140, textTransform: 'capitalize' },
+  userRole: { color: '#555', fontSize: 10, marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 140 },
   divider: { height: 1, background: 'rgba(255,255,255,0.06)', margin: '14px 12px' },
   nav: { flex: 1, padding: '0 10px' },
   navSection: { color: '#444', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', padding: '4px 12px 8px' },
