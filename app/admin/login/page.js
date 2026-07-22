@@ -7,16 +7,15 @@ import { auth } from '@/lib/firebase';
 
 export default function AdminLogin() {
   const router = useRouter();
-  const { login, loginWithGoogle } = useAuth();
-  const [email, setEmail] = useState('admin@creativemind.com');
-  const [password, setPassword] = useState('admin123');
+  const { login, loginWithGoogle, user, resetPassword } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [resetSent, setResetSent] = useState(false);
-  const { resetPassword } = useAuth();
 
   const [currentDomain, setCurrentDomain] = useState('');
   // Google sign-in only exists when Firebase Auth was actually initialised
@@ -24,29 +23,22 @@ export default function AdminLogin() {
   // Resolved after mount so SSR and client markup match.
   const [googleAvailable, setGoogleAvailable] = useState(false);
 
-  // Auto-login on page load
   useEffect(() => {
     setCurrentDomain(window.location.hostname);
     setGoogleAvailable(Boolean(auth));
-    setLoading(true);
-    login('admin@creativemind.com', 'admin123')
-      .then(() => router.push('/admin/dashboard'))
-      .catch(() => setLoading(false));
   }, []);
+
+  // If a valid Firebase session already exists, skip straight to the dashboard.
+  useEffect(() => {
+    if (user) router.push('/admin/dashboard');
+  }, [user, router]);
 
   async function handleLogin(e) {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Dev bypass — works even without Firebase setup
-    const DEV_PASS = 'admin123';
-    if (password === DEV_PASS) {
-      document.cookie = 'admin_token=dev_bypass_token; path=/; max-age=86400';
-      router.push('/admin/dashboard');
-      return;
-    }
-
+    // Real Firebase Email/Password authentication — no bypass.
     try {
       await login(email, password);
       router.push('/admin/dashboard');
@@ -65,11 +57,11 @@ export default function AdminLogin() {
       router.push('/admin/dashboard');
     } catch (err) {
       if (err.code === 'auth/operation-not-allowed') {
-        setError('Google sign-in is not enabled in Firebase Console. Use email login with password: admin123');
+        setError('Google sign-in is not enabled in the Firebase Console. Use email + password instead.');
       } else if (err.code === 'auth/unauthorized-domain') {
-        setError(`Add "${currentDomain}" to Firebase → Authentication → Settings → Authorized Domains. Or use email + password: admin123`);
+        setError(`Add "${currentDomain}" to Firebase → Authentication → Settings → Authorized Domains.`);
       } else if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
-        setError(friendlyError(err.code) + ' — Or sign in with email + password: admin123');
+        setError(friendlyError(err.code));
       }
     } finally {
       setGoogleLoading(false);
@@ -188,12 +180,6 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        <div style={{ marginTop: 16, padding: '10px 14px', background: 'rgba(108,99,255,0.08)', border: '1px solid rgba(108,99,255,0.2)', borderRadius: 10, textAlign: 'center' }}>
-          <p style={{ color: '#888', fontSize: 12, margin: 0 }}>
-            🔑 <strong style={{ color: '#aaa' }}>Quick access:</strong> any email + password <code style={{ color: '#6c63ff', background: 'rgba(108,99,255,0.15)', padding: '1px 6px', borderRadius: 4 }}>admin123</code>
-          </p>
-        </div>
-
         <p style={s.registerText}>
           Don&apos;t have an account?{' '}
           <Link href="/admin/register" style={s.registerLink}>Create one</Link>
@@ -223,7 +209,7 @@ function friendlyError(code) {
     'auth/user-disabled': 'This account has been disabled.',
     'auth/invalid-credential': 'Invalid email or password.',
     'auth/network-request-failed': 'Network error. Check your connection.',
-    'auth/not-configured': 'Firebase Auth is not enabled. Sign in with password: admin123',
+    'auth/not-configured': 'Firebase Auth is not enabled for this project.',
     'auth/popup-blocked': 'Your browser blocked the sign-in popup. Allow popups and retry.',
     'auth/operation-not-allowed': 'Google sign-in is not enabled in the Firebase Console.',
     'auth/unauthorized-domain': 'This domain is not authorized in Firebase → Auth → Settings.',

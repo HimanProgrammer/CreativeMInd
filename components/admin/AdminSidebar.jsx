@@ -12,6 +12,7 @@ const navItems = [
   { href: '/admin/team', label: 'Team', icon: '👥', badge: null },
   { href: '/admin/services', label: 'Services', icon: '⚙', badge: null },
   { href: '/admin/blog', label: 'Blog Posts', icon: '📝', badge: null },
+  { href: '/admin/users', label: 'Users', icon: '👥', badge: 'New' },
   { href: '/admin/settings', label: 'Settings', icon: '🔧', badge: null },
 ];
 
