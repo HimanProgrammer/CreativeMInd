@@ -53,7 +53,7 @@ export default function BestWork() {
   useEffect(() => {
     let cancelled = false;
     // Every exit below leaves the bundled deck on screen rather than skeletons.
-    const useLocal = () => { if (!cancelled) setItems(LOCAL_FALLBACK.slice(0, HOW_MANY)); };
+    const showLocal = () => { if (!cancelled) setItems(LOCAL_FALLBACK.slice(0, HOW_MANY)); };
     (async () => {
       try {
         // Pull a wide pool, then pick at random — so the homepage shows a
@@ -63,7 +63,7 @@ export default function BestWork() {
           .select('id,title,category,image_url,thumbnail_url,video_url,website_url')
           .limit(300);
         if (cancelled) return;
-        if (error || !data) { useLocal(); return; }
+        if (error || !data) { showLocal(); return; }
 
         // Website entries are link cards, not artwork — skip them here.
         const pool = data
@@ -78,7 +78,7 @@ export default function BestWork() {
           ? graphics
           : graphics.concat(LOCAL_FALLBACK).slice(0, HOW_MANY);
         if (!cancelled) setItems(filled);
-      } catch { useLocal(); }
+      } catch { showLocal(); }
     })();
     return () => { cancelled = true; };
   }, []);
