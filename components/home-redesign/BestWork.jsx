@@ -2,16 +2,26 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import LOCAL_WORKS from '@/data/portfolios/works1.json';
 
 const ORANGE = '#f05a28';
 const HOW_MANY = 8;
 
-// Shown while loading or if Supabase is unreachable, so the section is never empty.
+// Shown while loading, so the section is never empty.
 const PLACEHOLDERS = Array.from({ length: HOW_MANY }, (_, i) => ({
   id: `ph-${i}`,
   title: '',
   category: '',
   src: null,
+}));
+
+// Bundled with the repo, so the grid still shows real work when Supabase
+// returns nothing — keys missing in the deployment, RLS, a network hiccup.
+const LOCAL_FALLBACK = LOCAL_WORKS.filter((w) => w && w.img).map((w, i) => ({
+  id: `local-${i}`,
+  title: w.title || '',
+  category: w.category || '',
+  src: w.img,
 }));
 
 // Fisher–Yates. Runs inside useEffect (client-only) so there's no SSR
@@ -41,6 +51,8 @@ export default function BestWork() {
 
   useEffect(() => {
     let cancelled = false;
+    // Every exit below leaves the bundled deck on screen rather than skeletons.
+    const useLocal = () => { if (!cancelled) setItems(LOCAL_FALLBACK.slice(0, HOW_MANY)); };
     (async () => {
       try {
         // Pull a wide pool, then pick at random — so the homepage shows a
@@ -49,7 +61,8 @@ export default function BestWork() {
           .from('portfolio_items')
           .select('id,title,category,image_url,thumbnail_url,video_url,website_url')
           .limit(300);
-        if (cancelled || error || !data) return;
+        if (cancelled) return;
+        if (error || !data) { useLocal(); return; }
 
         // Website entries are link cards, not artwork — skip them here.
         const pool = data
@@ -59,8 +72,12 @@ export default function BestWork() {
 
         const graphics = shuffle(pool).slice(0, HOW_MANY);
 
-        if (graphics.length) setItems(graphics);
-      } catch { /* keep placeholders */ }
+        // Top up a short result so the grid is always full.
+        const filled = graphics.length >= HOW_MANY
+          ? graphics
+          : graphics.concat(LOCAL_FALLBACK).slice(0, HOW_MANY);
+        if (!cancelled) setItems(filled);
+      } catch { useLocal(); }
     })();
     return () => { cancelled = true; };
   }, []);

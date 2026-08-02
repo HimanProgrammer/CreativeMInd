@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import LOCAL_WORKS from '@/data/portfolios/works1.json';
 
 /* ============================================================
    THE PRINTING ROLL — CreativeMind edition
@@ -98,9 +99,34 @@ export default function PaperRollStage({ compact = false, active = true }) {
           }
           works = pool.slice(0, ATLAS_N);
         }
-      } catch { /* fall through to typographic cards */ }
+      } catch { /* fall through to the bundled deck below */ }
+
+      // The roll must never print blank plates. Supabase can come back empty for
+      // reasons outside this component — keys not set in the deployment, RLS,
+      // a network hiccup — so any shortfall is topped up from the deck that
+      // ships with the repo. Those files are same-origin, so they also sidestep
+      // the CORS check that a remote image has to pass.
+      if (works.length < ATLAS_N) {
+        const local = LOCAL_WORKS
+          .filter((w) => w && w.img)
+          .map((w) => ({ title: w.title || '', category: w.category || '', src: w.img }));
+        works = works.concat(local).slice(0, ATLAS_N);
+      }
 
       const images = await Promise.all(works.map((w) => loadImage(w.src)));
+      if (disposed) return;
+
+      // A remote image that 404s or fails the CORS check comes back null and
+      // would leave that card blank — swap in a bundled one instead.
+      for (let i = 0; i < images.length; i++) {
+        if (images[i]) continue;
+        const spare = LOCAL_WORKS[i % LOCAL_WORKS.length];
+        if (!spare || !spare.img) continue;
+        images[i] = await loadImage(spare.img);
+        if (images[i]) {
+          works[i] = { title: spare.title || '', category: spare.category || '', src: spare.img };
+        }
+      }
       if (disposed) return;
 
       const showFallback = () => {
