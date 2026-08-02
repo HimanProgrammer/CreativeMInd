@@ -3,17 +3,17 @@ import React from 'react';
 
 const projects = [
   {
-    img: '/assets/imgs/works/works1/1.jpg',
+    img: '/assets/imgs/works/1/1.jpg',
     tag: 'Web Application',
     title: 'Fintech Dashboard',
   },
   {
-    img: '/assets/imgs/works/works1/2.jpg',
+    img: '/assets/imgs/works/1/2.jpg',
     tag: 'Mobile Application',
     title: 'E-Commerce Mobile App',
   },
   {
-    img: '/assets/imgs/works/works1/3.jpg',
+    img: '/assets/imgs/works/1/3.jpg',
     tag: 'Branding',
     title: 'Brand Identity Design',
   },
