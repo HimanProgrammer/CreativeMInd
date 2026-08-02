@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import LOCAL_WORKS from '@/data/portfolios/works1.json';
+import LOCAL_WORKS from '@/data/portfolios/roll.json';
 
 const ORANGE = '#f05a28';
 const HOW_MANY = 8;
@@ -15,8 +15,9 @@ const PLACEHOLDERS = Array.from({ length: HOW_MANY }, (_, i) => ({
   src: null,
 }));
 
-// Bundled with the repo, so the grid still shows real work when Supabase
-// returns nothing — keys missing in the deployment, RLS, a network hiccup.
+// Real CreativeMind graphics committed under public/, so the grid still shows
+// our own work when Supabase returns nothing — keys missing in the deployment,
+// RLS, a network hiccup. Regenerate with: npm run sync-roll
 const LOCAL_FALLBACK = LOCAL_WORKS.filter((w) => w && w.img).map((w, i) => ({
   id: `local-${i}`,
   title: w.title || '',

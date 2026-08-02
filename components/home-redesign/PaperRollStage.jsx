@@ -1,7 +1,10 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import LOCAL_WORKS from '@/data/portfolios/works1.json';
+// Real CreativeMind graphics, pulled from the Supabase portfolio and committed
+// under public/ so the roll prints our own work even when the deployment can't
+// reach Supabase. Regenerate with: npm run sync-roll
+import LOCAL_WORKS from '@/data/portfolios/roll.json';
 
 /* ============================================================
    THE PRINTING ROLL — CreativeMind edition

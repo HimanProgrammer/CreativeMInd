@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "clean": "rimraf .next"
+    "clean": "rimraf .next",
+    "sync-roll": "node scripts/sync-roll.js"
   },
   "dependencies": {
     "@google-analytics/data": "^6.1.0",
