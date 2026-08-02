@@ -7,6 +7,7 @@ import Hero from '@/components/home-redesign/Hero';
 import Brands from '@/components/home-redesign/Brands';
 import Services from '@/components/home-redesign/Services';
 import BestWork from '@/components/home-redesign/BestWork';
+import PaperRoll from '@/components/home-redesign/PaperRoll';
 import WhyUs from '@/components/home-redesign/WhyUs';
 import HowWeWork from '@/components/home-redesign/HowWeWork';
 import Stats from '@/components/home-redesign/Stats';
@@ -45,6 +46,7 @@ export default function Home() {
         <Brands />
         <Services />
         <BestWork />
+        <PaperRoll />
         <WhyUs />
         <HowWeWork />
         <Stats />
