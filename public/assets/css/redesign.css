@@ -277,7 +277,8 @@
 }
 
 /* ===== RESET FOR REDESIGN ===== */
-body.redesign {
+body.redesign,
+.redesign {
   background: #fff;
   color: var(--dark);
   font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;

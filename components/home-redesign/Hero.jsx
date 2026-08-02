@@ -100,7 +100,7 @@ export default function Hero() {
         LET&apos;S TALK
       </a>
 
-      <section className="rd-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <section className="rd-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
 
         {/* Canvas particle network */}
         <canvas ref={canvasRef} style={{
@@ -170,6 +170,17 @@ export default function Hero() {
           borderRadius: '50%', animation: 'rd-float 4s 1s ease-in-out infinite', zIndex: 1,
         }} />
 
+        {/* ─── THE HERO IS THE SLIDER ─── */}
+        <div
+          className="rd-hero-slider"
+          onMouseEnter={() => setHeld(true)}
+          onMouseLeave={() => setHeld(false)}
+          aria-roledescription="carousel"
+        >
+          <div className="rd-hero-track" style={{ transform: `translateX(-${slide * 100}%)` }}>
+
+            {/* ══ SLIDE 1 — the pitch ══ */}
+            <div className="rd-hero-slide" aria-hidden={slide !== 0}>
         <div className="container" style={{ position: 'relative', zIndex: 2, paddingTop: 120 }}>
           <div className="row align-items-center" style={{ minHeight: '80vh' }}>
 
@@ -302,18 +313,8 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* ─── RIGHT VISUAL — SLIDER ─── */}
+            {/* ─── RIGHT VISUAL ─── */}
             <div className="col-lg-6 col-md-12">
-              <div
-                className="rd-hero-slider"
-                onMouseEnter={() => setHeld(true)}
-                onMouseLeave={() => setHeld(false)}
-                aria-roledescription="carousel"
-              >
-                <div className="rd-hero-track" style={{ transform: `translateX(-${slide * 100}%)` }}>
-
-                  {/* ── SLIDE 1 — studio showcase ── */}
-                  <div className="rd-hero-slide" aria-hidden={slide !== 0}>
               <div className="rd-hero-img-wrap" style={{ position: 'relative', textAlign: 'center' }}>
 
                 {/* Outer decorative ring (spinning) */}
@@ -384,7 +385,7 @@ export default function Hero() {
                   src="/assets/imgs/header/2.jpg"
                   alt="Digital Solutions"
                   style={{
-                    width: '86%', maxWidth: 460,
+                    width: '88%', maxWidth: 540,
                     borderRadius: 28,
                     boxShadow: '0 40px 100px rgba(0,0,0,0.14), 0 0 0 1px rgba(240,90,40,0.06)',
                     position: 'relative', zIndex: 1,
@@ -450,77 +451,83 @@ export default function Hero() {
                   <span style={{ fontSize: 11, color: '#1a1a2e', fontWeight: 700 }}>Available Now</span>
                 </div>
               </div>
-                  </div>
-
-                  {/* ── SLIDE 2 — the printing press ── */}
-                  <div className="rd-hero-slide" aria-hidden={slide !== 1}>
-                    <div className="rd-hero-press">
-                      {/* only the visible slide animates */}
-                      <PaperRollStage compact active={slide === 1} />
-                      <a href="/portfolio-masonry" className="rd-hero-press-cta">
-                        See the full portfolio <span>→</span>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ── controls ── */}
-                <button
-                  type="button"
-                  className="rd-hero-arrow rd-hero-prev"
-                  onClick={() => setSlide((s) => (s - 1 + SLIDES.length) % SLIDES.length)}
-                  aria-label="Previous slide"
-                >‹</button>
-                <button
-                  type="button"
-                  className="rd-hero-arrow rd-hero-next"
-                  onClick={() => setSlide((s) => (s + 1) % SLIDES.length)}
-                  aria-label="Next slide"
-                >›</button>
-
-                <div className="rd-hero-dots">
-                  {SLIDES.map((s, i) => (
-                    <button
-                      key={s.key}
-                      type="button"
-                      className={'rd-hero-dot' + (i === slide ? ' is-on' : '')}
-                      onClick={() => setSlide(i)}
-                      aria-label={s.label}
-                      aria-current={i === slide}
-                    />
-                  ))}
-                </div>
-              </div>
             </div>
 
           </div>
+        </div>
+            </div>
 
-          {/* ─── SCROLL INDICATOR ─── */}
+            {/* ══ SLIDE 2 — the printing press, full bleed ══ */}
+            <div className="rd-hero-slide rd-hero-slide-press" aria-hidden={slide !== 1}>
+              {/* only the slide on show animates */}
+              <PaperRollStage active={slide === 1} />
+
+              <div className="rd-hero-press-copy">
+                <p className="rd-hero-press-tag">✦ THE PRESS ✦</p>
+                <h2>Our Work,<br /><span>Printed Live</span></h2>
+                <p className="rd-hero-press-lead">
+                  Every pass of the roll lays down another piece from our portfolio.
+                  Move your cursor to steer it.
+                </p>
+                <a href="/portfolio-masonry" className="rd-hero-press-cta">
+                  SEE THE FULL PORTFOLIO <span>→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* ── controls ── */}
+          <button
+            type="button"
+            className="rd-hero-arrow rd-hero-prev"
+            onClick={() => setSlide((s) => (s - 1 + SLIDES.length) % SLIDES.length)}
+            aria-label="Previous slide"
+          >‹</button>
+          <button
+            type="button"
+            className="rd-hero-arrow rd-hero-next"
+            onClick={() => setSlide((s) => (s + 1) % SLIDES.length)}
+            aria-label="Next slide"
+          >›</button>
+
+          <div className="rd-hero-dots">
+            {SLIDES.map((s, i) => (
+              <button
+                key={s.key}
+                type="button"
+                className={'rd-hero-dot' + (i === slide ? ' is-on' : '')}
+                onClick={() => setSlide(i)}
+                aria-label={s.label}
+                aria-current={i === slide}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* ─── SCROLL INDICATOR ─── */}
+        <div className="rd-hero-scroll" style={{
+          textAlign: 'center',
+          animation: 'rd-fade-up 0.7s 1.4s ease both',
+        }}>
           <div style={{
-            textAlign: 'center', paddingBottom: 40,
-            animation: 'rd-fade-up 0.7s 1.4s ease both',
+            display: 'inline-flex', flexDirection: 'column',
+            alignItems: 'center', gap: 6,
+            color: '#aaa', fontSize: 11, fontWeight: 600,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
           }}>
+            <span>Scroll to explore</span>
             <div style={{
-              display: 'inline-flex', flexDirection: 'column',
-              alignItems: 'center', gap: 6,
-              color: '#aaa', fontSize: 11, fontWeight: 600,
-              letterSpacing: '0.1em', textTransform: 'uppercase',
+              width: 22, height: 36, border: '1.5px solid rgba(0,0,0,0.15)',
+              borderRadius: 12, display: 'flex', justifyContent: 'center',
+              paddingTop: 6,
             }}>
-              <span>Scroll to explore</span>
               <div style={{
-                width: 22, height: 36, border: '1.5px solid rgba(0,0,0,0.15)',
-                borderRadius: 12, display: 'flex', justifyContent: 'center',
-                paddingTop: 6,
-              }}>
-                <div style={{
-                  width: 3, height: 8, background: '#f05a28',
-                  borderRadius: 3,
-                  animation: 'rd-scroll-dot 1.6s ease infinite',
-                }} />
-              </div>
+                width: 3, height: 8, background: '#f05a28',
+                borderRadius: 3,
+                animation: 'rd-scroll-dot 1.6s ease infinite',
+              }} />
             </div>
           </div>
-
         </div>
       </section>
 
@@ -539,101 +546,143 @@ export default function Hero() {
           border-color: #f05a28 !important;
         }
 
-        /* ─── hero visual slider ─── */
+        /* ─── the hero IS the slider: full-bleed, full-viewport slides ─── */
         .rd-hero-slider {
           position: relative;
           width: 100%;
-          height: 560px;
+          min-height: 100vh;
           overflow: hidden;
+          z-index: 2;
         }
         .rd-hero-track {
           display: flex;
           width: 100%;
-          height: 100%;
-          transition: transform 0.75s cubic-bezier(0.65, 0, 0.35, 1);
+          min-height: 100vh;
+          transition: transform 0.85s cubic-bezier(0.65, 0, 0.35, 1);
         }
         .rd-hero-slide {
           flex: 0 0 100%;
           width: 100%;
-          height: 100%;
+          min-height: 100vh;
           display: flex;
           align-items: center;
           justify-content: center;
         }
-        .rd-hero-slide .rd-hero-img-wrap { width: 100%; }
+        /* descendant, not child: a raw child-combinator character inside a JSX
+           style tag is HTML-escaped on the server only, which trips hydration */
+        .rd-hero-slide .container { width: 100%; }
 
-        .rd-hero-press {
-          position: relative;
+        /* the press slide: the roll fills the whole hero, copy sits on top */
+        .rd-hero-slide-press { position: relative; padding: 0; }
+        .rd-hero-slide-press .pr-stage {
+          position: absolute;
+          inset: 0;
           width: 100%;
-          height: 82%;
-          border-radius: 20px;
-          overflow: hidden;
-          box-shadow: 0 30px 80px rgba(20,20,43,0.16), 0 0 0 1px rgba(240,90,40,0.08);
+          height: 100%;
+          border-radius: 0;
+        }
+        .rd-hero-press-copy {
+          position: relative;
+          z-index: 3;
+          max-width: 620px;
+          margin-left: 6vw;
+          margin-right: auto;
+          padding: 34px 38px;
+          background: rgba(250,250,251,0.82);
+          backdrop-filter: blur(10px);
+          border-radius: 22px;
+          box-shadow: 0 24px 70px rgba(20,20,43,0.12);
+          pointer-events: none; /* the roll still tracks the cursor underneath */
+        }
+        .rd-hero-press-tag {
+          font-size: 11px; font-weight: 700; letter-spacing: 0.28em;
+          color: #f05a28; margin: 0 0 14px;
+        }
+        .rd-hero-press-copy h2 {
+          font-size: clamp(38px, 5vw, 68px);
+          font-weight: 800; line-height: 1.05; letter-spacing: -0.03em;
+          margin: 0 0 18px; color: #14141c;
+        }
+        .rd-hero-press-copy h2 span {
+          background: linear-gradient(135deg, #f05a28, #e040fb);
+          -webkit-background-clip: text; background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+        .rd-hero-press-lead {
+          font-size: 15px; line-height: 1.7; color: #5a5a68;
+          margin: 0 0 26px; max-width: 440px;
         }
         .rd-hero-press-cta {
-          position: absolute;
-          left: 50%;
-          bottom: 18px;
-          transform: translateX(-50%);
-          display: inline-flex; align-items: center; gap: 8px;
-          padding: 9px 18px;
-          background: rgba(255,255,255,0.92);
-          backdrop-filter: blur(8px);
-          border-radius: 30px;
-          font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
-          color: #1a1a2e; text-decoration: none;
-          box-shadow: 0 6px 22px rgba(20,20,43,0.14);
-          transition: background 0.2s, color 0.2s;
-          z-index: 3;
+          pointer-events: auto;
+          display: inline-flex; align-items: center; gap: 10px;
+          padding: 14px 28px;
+          background: linear-gradient(135deg, #f05a28, #e8421a);
+          border-radius: 12px;
+          font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+          color: #fff; text-decoration: none;
+          box-shadow: 0 10px 32px rgba(240,90,40,0.35);
+          transition: transform 0.2s, box-shadow 0.2s;
         }
-        .rd-hero-press-cta:hover { background: #f05a28; color: #fff; }
-        .rd-hero-press-cta span { color: #f05a28; }
-        .rd-hero-press-cta:hover span { color: #fff; }
+        .rd-hero-press-cta:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 16px 42px rgba(240,90,40,0.45);
+          color: #fff;
+        }
 
         .rd-hero-arrow {
           position: absolute;
           top: 50%;
           transform: translateY(-50%);
-          width: 38px; height: 38px;
+          width: 46px; height: 46px;
           border: 1px solid rgba(240,90,40,0.25);
           background: rgba(255,255,255,0.85);
           backdrop-filter: blur(6px);
           border-radius: 50%;
           color: #f05a28;
-          font-size: 20px; line-height: 1;
+          font-size: 24px; line-height: 1;
           cursor: pointer;
           opacity: 0;
           transition: opacity 0.25s, background 0.2s, color 0.2s;
-          z-index: 4;
+          z-index: 5;
         }
         .rd-hero-slider:hover .rd-hero-arrow { opacity: 1; }
         .rd-hero-arrow:hover { background: #f05a28; color: #fff; }
-        .rd-hero-prev { left: 2px; }
-        .rd-hero-next { right: 2px; }
+        .rd-hero-prev { left: 18px; }
+        .rd-hero-next { right: 18px; }
 
         .rd-hero-dots {
           position: absolute;
-          left: 50%; bottom: 4px;
+          left: 50%; bottom: 96px;
           transform: translateX(-50%);
-          display: flex; gap: 8px;
-          z-index: 4;
+          display: flex; gap: 9px;
+          z-index: 5;
         }
         .rd-hero-dot {
-          width: 8px; height: 8px; padding: 0;
+          width: 9px; height: 9px; padding: 0;
           border: none; border-radius: 50%;
-          background: rgba(26,26,46,0.18);
+          background: rgba(26,26,46,0.2);
           cursor: pointer;
           transition: width 0.3s, background 0.3s;
         }
-        .rd-hero-dot.is-on { width: 24px; border-radius: 4px; background: #f05a28; }
+        .rd-hero-dot.is-on { width: 28px; border-radius: 5px; background: #f05a28; }
+
+        /* the indicator sits over the last slice of the hero */
+        .rd-hero-scroll {
+          position: absolute;
+          left: 0; right: 0; bottom: 26px;
+          z-index: 5;
+          pointer-events: none;
+        }
 
         @media (max-width: 991px) {
-          .rd-hero-slider { height: 470px; }
+          .rd-hero-press-copy { margin: 0 24px; padding: 26px 24px; }
+          .rd-hero-dots { bottom: 84px; }
         }
         @media (max-width: 767px) {
-          .rd-hero-slider { height: 400px; }
-          .rd-hero-press { height: 78%; }
-          .rd-hero-arrow { opacity: 1; width: 32px; height: 32px; font-size: 17px; }
+          .rd-hero-arrow { opacity: 1; width: 36px; height: 36px; font-size: 19px; }
+          .rd-hero-prev { left: 8px; }
+          .rd-hero-next { right: 8px; }
+          .rd-hero-press-lead { font-size: 14px; }
         }
       `}</style>
     </>

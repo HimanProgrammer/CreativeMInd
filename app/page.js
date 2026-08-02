@@ -32,8 +32,11 @@ export const metadata = {
 };
 
 export default function Home() {
+  // A page must not render its own <body> — app/layout.js already does one, and
+  // the nested tag makes React hoist these attributes onto the real body, which
+  // throws a hydration error. A plain wrapper carries the same styling.
   return (
-    <body className="redesign" style={{ margin: 0, padding: 0, background: '#fff' }}>
+    <div className="redesign" style={{ margin: 0, padding: 0, background: '#fff' }}>
       {/* Custom cursor & scroll animations */}
       <CustomCursor />
       <ScrollReveal />
@@ -58,6 +61,6 @@ export default function Home() {
       <Footer />
 
       {/* Analytics (GA4 + Google Ads) is loaded once site-wide in app/layout.js */}
-    </body>
+    </div>
   );
 }
