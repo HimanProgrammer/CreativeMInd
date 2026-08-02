@@ -19,13 +19,13 @@ export const metadata = {
 
 export default function UiUxServiceRoute() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <Navbar />
       <main>
         <UiUxPage />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

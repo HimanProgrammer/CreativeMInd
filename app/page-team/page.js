@@ -22,7 +22,7 @@ export const metadata = {
 
 export default function TeamPage() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <ScrollReveal />
       <Navbar />
@@ -33,6 +33,6 @@ export default function TeamPage() {
         <Team />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

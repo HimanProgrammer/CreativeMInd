@@ -1,0 +1,51 @@
+/* ===========================================================
+   Global responsive baseline
+   Loaded once in app/layout.js, so it applies to every page.
+   Page-specific styling still lives in public/assets/css/*.
+   =========================================================== */
+
+/* Nothing may push the page wider than the screen. Decorative rings, marquee
+   tracks and off-canvas menus all sit outside the viewport by design; without
+   this they turn into a horizontal scrollbar on phones. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Media never overflows its column, whatever width the markup asks for. */
+img,
+video,
+canvas,
+svg,
+iframe {
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+}
+
+/* Long unbroken strings (URLs, IDs, emails) wrap instead of forcing a wider
+   line box. */
+h1, h2, h3, h4, h5, h6, p, li, a, span, td, th {
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 767px) {
+  /* Touch targets: anything tappable gets a usable hit area. */
+  .rd-btn-primary,
+  .rd-btn-outline,
+  .rd-more-btn,
+  .rd-hero-arrow {
+    min-height: 44px;
+  }
+
+  /* Wide data tables scroll inside themselves instead of stretching the page. */
+  table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}

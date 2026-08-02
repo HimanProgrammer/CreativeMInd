@@ -26,7 +26,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <ScrollReveal />
       <Navbar />
@@ -40,6 +40,6 @@ export default function AboutPage() {
         <Blog />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

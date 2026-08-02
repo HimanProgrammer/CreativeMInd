@@ -7,7 +7,6 @@ import Hero from '@/components/home-redesign/Hero';
 import Brands from '@/components/home-redesign/Brands';
 import Services from '@/components/home-redesign/Services';
 import BestWork from '@/components/home-redesign/BestWork';
-import PaperRoll from '@/components/home-redesign/PaperRoll';
 import WhyUs from '@/components/home-redesign/WhyUs';
 import HowWeWork from '@/components/home-redesign/HowWeWork';
 import Stats from '@/components/home-redesign/Stats';
@@ -32,9 +31,9 @@ export const metadata = {
 };
 
 export default function Home() {
-  // A page must not render its own <body> — app/layout.js already does one, and
-  // the nested tag makes React hoist these attributes onto the real body, which
-  // throws a hydration error. A plain wrapper carries the same styling.
+  // A page must never render its own body element — app/layout.js already does
+  // one, and the nested tag makes React hoist these attributes onto the real
+  // body, which throws a hydration error. This wrapper carries the styling.
   return (
     <div className="redesign" style={{ margin: 0, padding: 0, background: '#fff' }}>
       {/* Custom cursor & scroll animations */}
@@ -49,7 +48,6 @@ export default function Home() {
         <Brands />
         <Services />
         <BestWork />
-        <PaperRoll />
         <WhyUs />
         <HowWeWork />
         <Stats />

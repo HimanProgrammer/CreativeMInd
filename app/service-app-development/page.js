@@ -19,13 +19,13 @@ export const metadata = {
 
 export default function AppDevelopmentPage() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <Navbar />
       <main>
         <AppDevPage />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

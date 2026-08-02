@@ -25,7 +25,7 @@ export const metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <body>
+    <div>
       <LoadingScreen />
       <Cursor />
       <ProgressScroll />
@@ -84,6 +84,6 @@ export default function PrivacyPolicyPage() {
       />
       {/* <Script src="/assets/js/smoother-script.js" strategy="lazyOnload" /> */}
       <Script src="/assets/js/scripts.js" />
-    </body>
+    </div>
   );
 }

@@ -19,13 +19,13 @@ export const metadata = {
 
 export default function SocialMediaMarketingPage() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <Navbar />
       <main>
         <SocialMediaPage />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

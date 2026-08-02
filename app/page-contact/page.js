@@ -22,7 +22,7 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <ScrollReveal />
       <Navbar />
@@ -32,6 +32,6 @@ export default function ContactPage() {
         <Map />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

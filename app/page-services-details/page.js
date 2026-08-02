@@ -21,7 +21,7 @@ export const metadata = {
 
 export default function ServiceDetailsPage() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <ScrollReveal />
       <Navbar />
@@ -31,6 +31,6 @@ export default function ServiceDetailsPage() {
         <Feat />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

@@ -34,7 +34,7 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <body>
+    <div>
       <LoadingScreen />
       <Cursor />
       <ProgressScroll />
@@ -102,6 +102,6 @@ export default function Home() {
       {/* <Script src="/assets/js/smoother-script.js" strategy="lazyOnload" /> */}
 
       <Script src="/assets/js/scripts.js"></Script>
-    </body>
+    </div>
   );
 }

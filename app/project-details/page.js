@@ -24,7 +24,7 @@ export const metadata = {
 
 export default function ProjectDetailsPage() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <ScrollReveal />
       <Navbar />
@@ -37,6 +37,6 @@ export default function ProjectDetailsPage() {
         <Next />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

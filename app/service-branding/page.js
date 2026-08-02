@@ -19,13 +19,13 @@ export const metadata = {
 
 export default function BrandingServiceRoute() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <Navbar />
       <main>
         <BrandingPage />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

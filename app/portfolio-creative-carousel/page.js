@@ -19,7 +19,7 @@ export const metadata = {
 
 export default function CreativeCarouselPage() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <ScrollReveal />
       <Navbar />
@@ -27,6 +27,6 @@ export default function CreativeCarouselPage() {
         <Portfolio />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

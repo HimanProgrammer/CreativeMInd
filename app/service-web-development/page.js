@@ -55,13 +55,13 @@ const config = {
 
 export default function WebDevelopmentPage() {
   return (
-    <body className="redesign">
+    <div className="redesign">
       <CustomCursor />
       <Navbar />
       <main>
         <ServicePage config={config} />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }

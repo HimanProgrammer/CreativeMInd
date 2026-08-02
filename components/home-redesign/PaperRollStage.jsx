@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 /* ============================================================
@@ -67,6 +67,9 @@ export default function PaperRollStage({ compact = false, active = true }) {
   const counterRef = useRef(null);
   const meterRef = useRef(null);
   const activeRef = useRef(active);
+  // When WebGL can't run (old phone, blocked context, three.js not reachable)
+  // the stage falls back to a plain image wall instead of an empty grey box.
+  const [fallback, setFallback] = useState(null);
 
   // The loop reads this every frame, so toggling slides never restarts WebGL.
   useEffect(() => { activeRef.current = active; }, [active]);
@@ -100,11 +103,16 @@ export default function PaperRollStage({ compact = false, active = true }) {
       const images = await Promise.all(works.map((w) => loadImage(w.src)));
       if (disposed) return;
 
+      const showFallback = () => {
+        if (!disposed) setFallback(works.filter((w) => w.src).slice(0, 6));
+      };
+
       let THREE;
       try {
         THREE = await loadThree();
       } catch {
-        return; // no WebGL lib, no roll — the empty stage stays
+        showFallback(); // CDN blocked or offline
+        return;
       }
       if (disposed || !canvasRef.current) return;
 
@@ -126,17 +134,35 @@ export default function PaperRollStage({ compact = false, active = true }) {
       let W = host.clientWidth || 1;
       let H = host.clientHeight || 1;
 
+      // Phone budget: no antialias, DPR capped at 1.5, no shadow pass, and a
+      // smaller atlas. Shadow maps and a 4096px-wide texture are what push this
+      // over the edge on mid-range mobile GPUs, where the context is either
+      // refused outright or drops to single-digit frame rates.
+      const small = window.innerWidth < 768;
+
       let renderer;
       try {
-        renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer = new THREE.WebGLRenderer({
+          canvas,
+          antialias: !small,
+          powerPreference: 'high-performance',
+          failIfMajorPerformanceCaveat: false,
+        });
+        if (!renderer.getContext()) throw new Error('no webgl context');
       } catch {
+        showFallback();
         return;
       }
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2));
       renderer.setSize(W, H, false);
-      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.enabled = !small;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       renderer.outputEncoding = THREE.sRGBEncoding;
+
+      // A context lost on a backgrounded phone tab never comes back on its own.
+      const onContextLost = (e) => { e.preventDefault(); showFallback(); };
+      canvas.addEventListener('webglcontextlost', onContextLost, false);
+      cleanups.push(() => canvas.removeEventListener('webglcontextlost', onContextLost));
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xeaeaec);
@@ -148,8 +174,8 @@ export default function PaperRollStage({ compact = false, active = true }) {
       scene.add(new THREE.HemisphereLight(0xffffff, 0xd6d6da, 0.95));
 
       const sun = new THREE.DirectionalLight(0xffffff, 0.85);
-      sun.castShadow = true;
-      sun.shadow.mapSize.set(2048, 2048);
+      sun.castShadow = !small;
+      sun.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048);
       sun.shadow.camera.left = -9;
       sun.shadow.camera.right = 9;
       sun.shadow.camera.top = 9;
@@ -184,7 +210,11 @@ export default function PaperRollStage({ compact = false, active = true }) {
       // Atlas — ATLAS_N portfolio cards on one strip
       // ============================================================
       function buildAtlas() {
-        const CELL = 512;
+        // 8 × 512 = 4096px, exactly the max texture size on a lot of phones —
+        // one pixel over and the upload silently fails. 320 keeps mobile clear
+        // of the ceiling at 2560px.
+        const CELL = small ? 320 : 512;
+        const K = CELL / 512; // every offset below was drawn for a 512px cell
         const cv = document.createElement('canvas');
         cv.width = CELL * ATLAS_N;
         cv.height = CELL;
@@ -200,7 +230,7 @@ export default function PaperRollStage({ compact = false, active = true }) {
           g.fillRect(rand() * cv.width, rand() * cv.height, 1 + rand() * 2, 1);
         }
 
-        const M = 30;
+        const M = 30 * K;
 
         function cardFrame(cx) {
           const x = cx + M, y = M, w = CELL - M * 2, h = CELL - M * 2;
@@ -219,16 +249,16 @@ export default function PaperRollStage({ compact = false, active = true }) {
 
         function label(x, y, txt, color, size, weight) {
           g.fillStyle = color || INK;
-          g.font = (weight || 700) + ' ' + (size || 13) + 'px "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
+          g.font = (weight || 700) + ' ' + (size || 13) * K + 'px "Plus Jakarta Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
           g.fillText(txt, x, y);
         }
         function mono(x, y, txt, color, size) {
           g.fillStyle = color || '#8a8a86';
-          g.font = '600 ' + (size || 11) + 'px "SF Mono", Menlo, Consolas, monospace';
+          g.font = '600 ' + (size || 11) * K + 'px "SF Mono", Menlo, Consolas, monospace';
           g.fillText(txt, x, y);
         }
         function clip(txt, max, size) {
-          g.font = '700 ' + size + 'px "Plus Jakarta Sans", Helvetica, Arial, sans-serif';
+          g.font = '700 ' + size * K + 'px "Plus Jakarta Sans", Helvetica, Arial, sans-serif';
           let s = txt;
           while (s.length > 3 && g.measureText(s).width > max) s = s.slice(0, -1);
           return s === txt ? s : s.trim() + '…';
@@ -247,7 +277,7 @@ export default function PaperRollStage({ compact = false, active = true }) {
         }
 
         function plate(f, img) {
-          const px = f.x + 20, py = f.y + 20, pw = f.w - 40, ph = f.h * 0.66;
+          const px = f.x + 20 * K, py = f.y + 20 * K, pw = f.w - 40 * K, ph = f.h * 0.66;
           if (img) {
             cover(img, px, py, pw, ph);
           } else {
@@ -257,7 +287,7 @@ export default function PaperRollStage({ compact = false, active = true }) {
             g.fillStyle = gr;
             g.fillRect(px, py, pw, ph);
             g.fillStyle = ORANGE;
-            g.fillRect(px + 28, py + ph - 46, 70, 8);
+            g.fillRect(px + 28 * K, py + ph - 46 * K, 70 * K, 8 * K);
           }
           g.strokeStyle = 'rgba(20,20,20,0.10)';
           g.lineWidth = 1;
@@ -272,16 +302,16 @@ export default function PaperRollStage({ compact = false, active = true }) {
 
           // caption block
           const cat = (work && work.category ? work.category : 'Creative Work').toUpperCase();
-          label(f.x + 22, bottom + 42, clip(work && work.title ? work.title : 'CreativeMind', f.w - 44, 22), INK, 22);
+          label(f.x + 22 * K, bottom + 42 * K, clip(work && work.title ? work.title : 'CreativeMind', f.w - 44 * K, 22), INK, 22);
           g.fillStyle = ORANGE;
-          g.fillRect(f.x + 22, bottom + 60, 48, 5);
-          mono(f.x + 22, bottom + 92, cat.slice(0, 28), '#7c7c80', 12);
-          label(f.x + 22, f.h + f.y - 24, 'CREATIVEMIND', '#9a9994', 12, 800);
-          mono(f.x + f.w - 96, f.h + f.y - 24, 'IT SOLUTIONS', '#b3b2ad', 11);
+          g.fillRect(f.x + 22 * K, bottom + 60 * K, 48 * K, 5 * K);
+          mono(f.x + 22 * K, bottom + 92 * K, cat.slice(0, 28), '#7c7c80', 12);
+          label(f.x + 22 * K, f.h + f.y - 24 * K, 'CREATIVEMIND', '#9a9994', 12, 800);
+          mono(f.x + f.w - 96 * K, f.h + f.y - 24 * K, 'IT SOLUTIONS', '#b3b2ad', 11);
 
           // index tag down the right edge
           g.save();
-          g.translate(f.x + f.w - 12, f.y + f.h - 14);
+          g.translate(f.x + f.w - 12 * K, f.y + f.h - 14 * K);
           g.rotate(-Math.PI / 2);
           mono(0, 0, '0' + (n + 1) + '/00' + ATLAS_N, '#9a9994', 11);
           g.restore();
@@ -299,7 +329,7 @@ export default function PaperRollStage({ compact = false, active = true }) {
 
       // Spiral cap: hundreds of wound paper layers, drawn once
       function buildCapTexture() {
-        const S = 1024;
+        const S = small ? 512 : 1024;
         const cv = document.createElement('canvas');
         cv.width = S; cv.height = S;
         const g = cv.getContext('2d');
@@ -661,7 +691,9 @@ export default function PaperRollStage({ compact = false, active = true }) {
       }
 
       // ---------- Camera ----------
-      const camOffset = new THREE.Vector3(7.6, 8.8, 10.8);
+      // a phone's tall, narrow frame crops the roll badly at the desktop
+      // distance, so the camera pulls back on small screens
+      const camOffset = new THREE.Vector3(7.6, 8.8, 10.8).multiplyScalar(small ? 1.32 : 1);
       const camPos = new THREE.Vector3();
       const lookAt = new THREE.Vector3(0, 0.6, 0);
       const _desired = new THREE.Vector3();
@@ -791,7 +823,19 @@ export default function PaperRollStage({ compact = false, active = true }) {
   }, []);
 
   return (
-    <div className={'pr-stage' + (compact ? ' pr-compact' : '')} ref={hostRef}>
+    <div className={'pr-stage' + (compact ? ' pr-compact' : '') + (fallback ? ' pr-fallback' : '')} ref={hostRef}>
+      {fallback ? (
+        <div className="pr-wall">
+          {fallback.map((w, i) => (
+            <figure key={i} className="pr-wall-card">
+              <img src={w.src} alt={w.title || w.category || 'CreativeMind work'} loading="lazy" />
+              {(w.title || w.category) && (
+                <figcaption>{w.title || w.category}</figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      ) : null}
       <canvas ref={canvasRef} />
       <div className="pr-hud pr-brand">
         <span className="pr-mark">CreativeMind<sup>&reg;</sup></span>
@@ -813,6 +857,39 @@ export default function PaperRollStage({ compact = false, active = true }) {
           border-radius: 18px;
         }
         .pr-stage canvas { display: block; width: 100%; height: 100%; }
+        .pr-stage.pr-fallback canvas { display: none; }
+
+        /* shown only when WebGL is unavailable */
+        .pr-wall {
+          position: absolute;
+          inset: 0;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+          padding: 10px;
+          overflow: hidden;
+        }
+        .pr-wall-card {
+          position: relative;
+          margin: 0;
+          overflow: hidden;
+          border-radius: 10px;
+          background: #f2f1ec;
+          box-shadow: 0 6px 18px rgba(20,20,43,0.08);
+        }
+        .pr-wall-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .pr-wall-card figcaption {
+          position: absolute;
+          left: 0; right: 0; bottom: 0;
+          padding: 16px 10px 8px;
+          background: linear-gradient(to top, rgba(12,12,16,0.78), transparent);
+          color: #fff;
+          font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        @media (max-width: 767px) {
+          .pr-wall { grid-template-columns: repeat(2, 1fr); }
+        }
         .pr-stage .pr-hud {
           position: absolute;
           color: #141414;
