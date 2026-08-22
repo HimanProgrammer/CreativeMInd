@@ -15,6 +15,7 @@
     "@google-analytics/data": "^6.1.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.107.0",
+    "@vercel/analytics": "^2.0.1",
     "baseline-browser-mapping": "^2.11.10",
     "caniuse-lite": "^1.0.30001806",
     "eslint": "8.56.0",
