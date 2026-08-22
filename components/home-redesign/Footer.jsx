@@ -13,12 +13,12 @@ export default function Footer() {
               <p>We build digital products that help businesses grow and succeed online.</p>
               <div className="rd-footer-social">
                 {[
-                  { icon: 'fab fa-facebook-f', href: '#' },
-                  { icon: 'fab fa-twitter', href: '#' },
-                  { icon: 'fab fa-linkedin-in', href: '#' },
-                  { icon: 'fab fa-instagram', href: '#' },
-                ].map((s, i) => (
-                  <a key={i} href={s.href}>
+                  { icon: 'fab fa-facebook-f', href: SITE.social.facebook },
+                  { icon: 'fab fa-twitter', href: SITE.social.twitter },
+                  { icon: 'fab fa-linkedin-in', href: SITE.social.linkedin },
+                  { icon: 'fab fa-instagram', href: SITE.social.instagram },
+                ].filter((s) => s.href && s.href !== '#').map((s, i) => (
+                  <a key={i} href={s.href} target="_blank" rel="noreferrer">
                     <i className={s.icon}></i>
                   </a>
                 ))}

@@ -84,56 +84,77 @@ export default function PaperRollStage({ compact = false, active = true }) {
 
     (async () => {
       // ---------- portfolio cards ----------
-      let works = [];
+      // Build the FULL shuffled pool of works so the roll can cycle through the
+      // entire portfolio over time instead of looping the same 8 cards. The
+      // 8-card atlas stays (a 4096px texture is the mobile ceiling); we just
+      // repaint it with the next batch each revolution — see advanceAtlas().
+      let remote = [];
       try {
         const { data } = await supabase
           .from('portfolio_items')
           .select('id,title,category,image_url,thumbnail_url,video_url,website_url')
           .limit(300);
         if (data) {
-          const pool = data
+          remote = data
             .filter((i) => !i.website_url)
             .map((i) => ({ title: i.title || '', category: i.category || '', src: pickSrc(i) }))
             .filter((i) => i.src);
-          // random slice, so the roll prints a different set on every visit
-          for (let i = pool.length - 1; i > 0; i--) {
+          for (let i = remote.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [pool[i], pool[j]] = [pool[j], pool[i]];
+            [remote[i], remote[j]] = [remote[j], remote[i]];
           }
-          works = pool.slice(0, ATLAS_N);
         }
       } catch { /* fall through to the bundled deck below */ }
 
-      // The roll must never print blank plates. Supabase can come back empty for
-      // reasons outside this component — keys not set in the deployment, RLS,
-      // a network hiccup — so any shortfall is topped up from the deck that
-      // ships with the repo. Those files are same-origin, so they also sidestep
-      // the CORS check that a remote image has to pass.
-      if (works.length < ATLAS_N) {
-        const local = LOCAL_WORKS
-          .filter((w) => w && w.img)
-          .map((w) => ({ title: w.title || '', category: w.category || '', src: w.img }));
-        works = works.concat(local).slice(0, ATLAS_N);
+      // Bundled deck ships with the repo — same-origin (CORS-safe) and used both
+      // as the tail of the pool and as spares when a remote image fails to load.
+      const local = LOCAL_WORKS
+        .filter((w) => w && w.img)
+        .map((w) => ({ title: w.title || '', category: w.category || '', src: w.img }));
+
+      // The roll must never print blank plates, so always fold the bundled deck
+      // in after the (shuffled) remote works.
+      const fullPool = remote.concat(local);
+      if (!fullPool.length) return; // nothing at all to print
+
+      // Lazily load + cache images by pool index; a failed remote load falls
+      // back to a bundled spare so a card is never blank.
+      const imgCache = new Map();
+      async function imgAt(idx) {
+        const i = ((idx % fullPool.length) + fullPool.length) % fullPool.length;
+        if (imgCache.has(i)) return imgCache.get(i);
+        let im = await loadImage(fullPool[i].src);
+        if (!im && local.length) im = await loadImage(local[i % local.length].src);
+        imgCache.set(i, im);
+        return im;
       }
 
-      const images = await Promise.all(works.map((w) => loadImage(w.src)));
-      if (disposed) return;
-
-      // A remote image that 404s or fails the CORS check comes back null and
-      // would leave that card blank — swap in a bundled one instead.
-      for (let i = 0; i < images.length; i++) {
-        if (images[i]) continue;
-        const spare = LOCAL_WORKS[i % LOCAL_WORKS.length];
-        if (!spare || !spare.img) continue;
-        images[i] = await loadImage(spare.img);
-        if (images[i]) {
-          works[i] = { title: spare.title || '', category: spare.category || '', src: spare.img };
+      // Load one atlas-worth (ATLAS_N) of works starting at `start`, wrapping.
+      async function loadBatch(start) {
+        const w = [], im = [];
+        for (let k = 0; k < ATLAS_N; k++) {
+          const i = (start + k) % fullPool.length;
+          w.push(fullPool[i]);
+          im.push(await imgAt(i));
         }
+        return { w, im };
       }
-      if (disposed) return;
+
+      // The ATLAS_N cards currently painted on the atlas, and where they came
+      // from in the pool. advanceAtlas() moves the cursor forward each cycle.
+      let cursor = 0;
+      let repaintAtlas = null; // set by buildAtlas(); repaints the shared canvas
+      let currentWorks = [];
+      let currentImages = [];
+      {
+        const b = await loadBatch(0);
+        if (disposed) return;
+        currentWorks = b.w;
+        currentImages = b.im;
+      }
 
       const showFallback = () => {
-        if (!disposed) setFallback(works.filter((w) => w.src).slice(0, 6));
+        if (!disposed) setFallback(currentWorks.filter((w) => w && w.src).slice(0, 6));
       };
 
       let THREE;
@@ -251,14 +272,6 @@ export default function PaperRollStage({ compact = false, active = true }) {
         const INK = '#161616';
         const PAPER = '#fbfaf7';
 
-        g.fillStyle = '#f6f5f1';
-        g.fillRect(0, 0, cv.width, cv.height);
-        // faint fibre grain, so the paper never reads as flat vector
-        for (let i = 0; i < 2600; i++) {
-          g.fillStyle = 'rgba(120,116,105,' + (0.015 + rand() * 0.03) + ')';
-          g.fillRect(rand() * cv.width, rand() * cv.height, 1 + rand() * 2, 1);
-        }
-
         const M = 30 * K;
 
         function cardFrame(cx) {
@@ -326,8 +339,8 @@ export default function PaperRollStage({ compact = false, active = true }) {
 
         function drawCard(cx, n) {
           const f = cardFrame(cx);
-          const work = works[n] || null;
-          const bottom = plate(f, images[n]);
+          const work = currentWorks[n] || null;
+          const bottom = plate(f, currentImages[n]);
 
           // caption block
           const cat = (work && work.category ? work.category : 'Creative Work').toUpperCase();
@@ -346,7 +359,22 @@ export default function PaperRollStage({ compact = false, active = true }) {
           g.restore();
         }
 
-        for (let c = 0; c < ATLAS_N; c++) drawCard(c * CELL, c);
+        // Paints all ATLAS_N cards onto the shared canvas. Re-run each cycle
+        // (via repaintAtlas) to swap the whole atlas to the next batch of works.
+        function paint() {
+          seed = 7; // deterministic grain, so repaints never flicker the paper
+          g.fillStyle = '#f6f5f1';
+          g.fillRect(0, 0, cv.width, cv.height);
+          // faint fibre grain, so the paper never reads as flat vector
+          for (let i = 0; i < 2600; i++) {
+            g.fillStyle = 'rgba(120,116,105,' + (0.015 + rand() * 0.03) + ')';
+            g.fillRect(rand() * cv.width, rand() * cv.height, 1 + rand() * 2, 1);
+          }
+          for (let c = 0; c < ATLAS_N; c++) drawCard(c * CELL, c);
+        }
+
+        repaintAtlas = paint; // exposed so advanceAtlas() can recycle the atlas
+        paint();
 
         const tex = new THREE.CanvasTexture(cv);
         tex.wrapS = THREE.RepeatWrapping;
@@ -789,6 +817,30 @@ export default function PaperRollStage({ compact = false, active = true }) {
       io.observe(host);
       cleanups.push(() => io.disconnect());
 
+      // ---------- Atlas recycling: cycle through the whole portfolio ----------
+      // One atlas == one full revolution of the roll. Each time the roll turns
+      // over, repaint the atlas with the next ATLAS_N works so, given enough
+      // rolling, every graphic in the portfolio gets printed — no fixed loop.
+      const ATLAS_SPAN = CARD_LEN * ATLAS_N;
+      let lastAtlasCycle = Math.floor(sTotal / ATLAS_SPAN); // start after preroll
+      let atlasBusy = false;
+      async function advanceAtlas() {
+        // Nothing to cycle to if the pool is only one atlas deep.
+        if (atlasBusy || fullPool.length <= ATLAS_N || !repaintAtlas) return;
+        atlasBusy = true;
+        try {
+          cursor = (cursor + ATLAS_N) % fullPool.length;
+          const b = await loadBatch(cursor);
+          if (disposed) return;
+          currentWorks = b.w;
+          currentImages = b.im;
+          repaintAtlas();
+          atlasTex.needsUpdate = true;   // ribbon + barrel share this canvas
+          barrelTex.needsUpdate = true;
+        } catch { /* keep the current atlas on any failure */ }
+        finally { atlasBusy = false; }
+      }
+
       // ---------- Main loop ----------
       const clock = new THREE.Clock();
       let elapsed = 0;
@@ -803,6 +855,13 @@ export default function PaperRollStage({ compact = false, active = true }) {
 
         updateTarget(elapsed, dt);
         stepMotion(dt);
+
+        // Recycle the atlas to the next batch of works once per revolution.
+        const atlasCycle = Math.floor(sTotal / ATLAS_SPAN);
+        if (atlasCycle !== lastAtlasCycle) {
+          lastAtlasCycle = atlasCycle;
+          advanceAtlas();
+        }
 
         rollGroup.position.set(pos.x, ROLL_R, pos.y);
         rollGroup.rotation.y = yaw;

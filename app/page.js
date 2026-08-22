@@ -11,7 +11,6 @@ import WhyUs from '@/components/home-redesign/WhyUs';
 import HowWeWork from '@/components/home-redesign/HowWeWork';
 import Stats from '@/components/home-redesign/Stats';
 import Testimonials from '@/components/home-redesign/Testimonials';
-import Pricing from '@/components/home-redesign/Pricing';
 import CTABanner from '@/components/home-redesign/CTABanner';
 import Footer from '@/components/home-redesign/Footer';
 
@@ -52,7 +51,6 @@ export default function Home() {
         <HowWeWork />
         <Stats />
         <Testimonials />
-        <Pricing />
         <CTABanner />
       </main>
 

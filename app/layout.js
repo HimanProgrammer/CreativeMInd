@@ -3,10 +3,52 @@ import './globals.css';
 import Script from 'next/script';
 import GlobalScrollReveal from '@/components/common/GlobalScrollReveal';
 import GoogleAnalytics from '@/components/common/GoogleAnalytics';
+import { SITE } from '@/lib/siteConfig';
+
+const SITE_URL = SITE.website.replace(/\/$/, '');
 
 export const metadata = {
-  title: 'CreativeMind IT Solutions',
-  description: 'CreativeMind IT Solutions — Web Dev, Mobile Apps, UI/UX, Branding & Digital Marketing',
+  // Resolves relative OG/canonical URLs against the real domain.
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'CreativeMind IT Solutions — Web, Apps, Branding & Digital Marketing',
+    template: '%s | CreativeMind IT Solutions',
+  },
+  description:
+    'CreativeMind IT Solutions builds high-performance websites, mobile apps, brand identities, SEO and social media marketing that grow your business.',
+  keywords: [
+    'web development', 'mobile app development', 'UI UX design', 'branding',
+    'SEO services', 'social media marketing', 'digital agency', 'Pune',
+    'CreativeMind IT Solutions',
+  ],
+  applicationName: 'CreativeMind IT Solutions',
+  // Explicitly invite crawling and rich snippets.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  alternates: { canonical: '/' },
+  openGraph: {
+    type: 'website',
+    url: SITE_URL,
+    siteName: 'CreativeMind IT Solutions',
+    title: 'CreativeMind IT Solutions — Digital Products That Grow Your Business',
+    description:
+      'Websites, mobile apps, branding, SEO and social media marketing — crafted by CreativeMind IT Solutions.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CreativeMind IT Solutions',
+    description:
+      'Websites, mobile apps, branding, SEO and social media marketing that grow your business.',
+  },
 };
 
 export default function RootLayout({ children }) {
