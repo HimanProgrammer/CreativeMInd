@@ -3,8 +3,7 @@ import CustomCursor from '@/components/home-redesign/CustomCursor';
 import ScrollReveal from '@/components/home-redesign/ScrollReveal';
 import Navbar from '@/components/home-redesign/Navbar';
 import Footer from '@/components/home-redesign/Footer';
-import Header from '@/components/page-contact/Header';
-import Contact from '@/components/page-contact/Contact';
+import ContactUpgraded from '@/components/page-contact/ContactUpgraded';
 import Map from '@/components/page-contact/Map';
 
 export const metadata = {
@@ -27,8 +26,7 @@ export default function ContactPage() {
       <ScrollReveal />
       <Navbar />
       <main>
-        <Header />
-        <Contact />
+        <ContactUpgraded />
         <Map />
       </main>
       <Footer />

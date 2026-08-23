@@ -9,7 +9,30 @@ export default function GlobalScrollReveal() {
     // Skip admin routes
     if (pathname?.startsWith('/admin')) return;
 
+    let observer = null;
+    let hardTimer = null;
+    let cancelled = false;
+
+    const reveal = (el) => {
+      if (el && el.classList.contains('gs-hidden')) {
+        el.classList.add('gs-visible');
+        if (observer) observer.unobserve(el);
+      }
+    };
+
+    // Reveal anything currently within (or just below) the viewport, without
+    // waiting for IntersectionObserver — this is what keeps above-the-fold
+    // content from ever getting stuck at opacity:0 if IO is slow or blocked.
+    const revealInView = () => {
+      const vh = window.innerHeight || 800;
+      document.querySelectorAll('.gs-hidden:not(.gs-visible)').forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top < vh + 60 && r.bottom > -60) reveal(el);
+      });
+    };
+
     const run = () => {
+      if (cancelled) return;
       const targets = document.querySelectorAll(
         'section, .section, article, ' +
         'h1:not(.no-anim), h2:not(.no-anim), h3:not(.no-anim), ' +
@@ -28,49 +51,56 @@ export default function GlobalScrollReveal() {
         '.reveal, .sr, [data-sr]'
       );
 
-      const seen = new WeakSet();
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !seen.has(entry.target)) {
-            seen.add(entry.target);
-            entry.target.classList.add('gs-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+      const supportsIO = typeof IntersectionObserver !== 'undefined';
+      if (supportsIO) {
+        observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) reveal(entry.target);
+          });
+        }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
+      }
 
       targets.forEach((el, i) => {
         if (el.classList.contains('gs-init')) return;
         el.classList.add('gs-init');
-
-        // Determine direction based on position in parent
         const siblings = el.parentElement?.children;
         const idx = siblings ? Array.from(siblings).indexOf(el) : i;
-        const delay = Math.min(idx * 60, 400);
-
-        el.style.transitionDelay = delay + 'ms';
+        el.style.transitionDelay = Math.min(idx * 60, 400) + 'ms';
         el.classList.add('gs-hidden');
-
-        observer.observe(el);
+        if (observer) observer.observe(el);
       });
 
-      return () => observer.disconnect();
+      // Immediately reveal what's already on screen (don't wait for IO).
+      revealInView();
+      requestAnimationFrame(revealInView);
+
+      // Scroll fallback: reveals as you scroll even if IO never fires.
+      window.addEventListener('scroll', revealInView, { passive: true });
+
+      // Hard safety net: whatever the reason, never leave the page blank.
+      // After a short beat, reveal everything still hidden.
+      hardTimer = setTimeout(() => {
+        document.querySelectorAll('.gs-hidden:not(.gs-visible)').forEach(reveal);
+      }, 1400);
     };
 
-    // Small delay to let DOM settle after navigation
-    const t = setTimeout(run, 120);
-    return () => clearTimeout(t);
+    const t = setTimeout(run, 80);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+      clearTimeout(hardTimer);
+      if (observer) observer.disconnect();
+      window.removeEventListener('scroll', revealInView);
+    };
   }, [pathname]);
 
   return (
     <style dangerouslySetInnerHTML={{ __html: `
       .gs-hidden {
         opacity: 0;
-        transform: translateY(32px);
-        transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1),
-                    transform 0.55s cubic-bezier(0.22,1,0.36,1);
-        will-change: opacity, transform;
+        transform: translateY(28px);
+        transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1),
+                    transform 0.5s cubic-bezier(0.22,1,0.36,1);
       }
       .gs-visible {
         opacity: 1 !important;

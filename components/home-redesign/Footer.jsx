@@ -9,7 +9,7 @@ export default function Footer() {
           {/* About */}
           <div className="col-lg-3 col-md-6">
             <div className="rd-footer-about">
-              <img src="/assets/imgs/logo-light.png" alt="CreativeMind" style={{ height: 38, filter: 'brightness(2)' }} />
+              <img src="/assets/imgs/logo-light-03.png" alt="CreativeMind" style={{ height: 120, width: 'auto', display: 'block', maxWidth: '100%' }} />
               <p>We build digital products that help businesses grow and succeed online.</p>
               <div className="rd-footer-social">
                 {[
