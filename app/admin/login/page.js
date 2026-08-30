@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/authContext';
-import { auth } from '@/lib/firebase';
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -18,14 +17,9 @@ export default function AdminLogin() {
   const [resetSent, setResetSent] = useState(false);
 
   const [currentDomain, setCurrentDomain] = useState('');
-  // Google sign-in only exists when Firebase Auth was actually initialised
-  // (lib/firebase.js only builds `auth` when NEXT_PUBLIC_FIREBASE_AUTH_ENABLED === 'true').
-  // Resolved after mount so SSR and client markup match.
-  const [googleAvailable, setGoogleAvailable] = useState(false);
 
   useEffect(() => {
     setCurrentDomain(window.location.hostname);
-    setGoogleAvailable(Boolean(auth));
   }, []);
 
   // If a valid Firebase session already exists, skip straight to the dashboard.
@@ -125,20 +119,16 @@ export default function AdminLogin() {
         <h2 style={s.title}>Welcome Back</h2>
         <p style={s.subtitle}>Sign in to CreativeMind Admin</p>
 
-        {/* Google Sign In — only when Firebase Auth is actually enabled */}
-        {googleAvailable && (
-          <>
-            <button onClick={handleGoogleLogin} disabled={googleLoading} style={s.googleBtn}>
-              {googleLoading ? <span style={s.spinner} /> : <GoogleIcon />}
-              {googleLoading ? 'Signing in...' : 'Continue with Google'}
-            </button>
-            <div style={s.divider}>
-              <span style={s.dividerLine} />
-              <span style={s.dividerText}>or sign in with email</span>
-              <span style={s.dividerLine} />
-            </div>
-          </>
-        )}
+        {/* Google Sign In (OAuth) */}
+        <button onClick={handleGoogleLogin} disabled={googleLoading} style={s.googleBtn}>
+          {googleLoading ? <span style={s.spinner} /> : <GoogleIcon />}
+          {googleLoading ? 'Signing in...' : 'Continue with Google'}
+        </button>
+        <div style={s.divider}>
+          <span style={s.dividerLine} />
+          <span style={s.dividerText}>or sign in with email</span>
+          <span style={s.dividerLine} />
+        </div>
 
         {/* Email/Password Form */}
         <form onSubmit={handleLogin} style={s.form}>
