@@ -26,7 +26,7 @@ export default function Reels() {
   const list = reels ? (showAll ? reels : reels.slice(0, FIRST)) : null;
 
   return (
-    <section className="rd-section rd-reels">
+    <section id="reels" className="rd-section rd-reels">
       <div className="container">
         <div className="row align-items-end mb-50">
           <div className="col-lg-7 rd-reveal-left">
