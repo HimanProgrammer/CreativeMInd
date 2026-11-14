@@ -17,7 +17,7 @@ function shape({ id, title, published, description }) {
     id,
     title: title || 'CreativeMind Reel',
     published: published || null,
-    description: (description || '').slice(0, 300),
+    description: description || '',
     url: `https://www.youtube.com/shorts/${id}`,
     watchUrl: `https://www.youtube.com/watch?v=${id}`,
     embedUrl: `https://www.youtube.com/embed/${id}`,
@@ -100,6 +100,11 @@ export async function GET() {
   } catch (err) {
     return NextResponse.json({ reels: [], source, error: err.message, channel: SITE.social.youtube });
   }
+  // The channel also carries personal uploads (devotional, coffee, WhatsApp
+  // clips). Only show Creative Mind business Shorts on the website.
+  const isBusiness = (r) => /creative\s*mind|creativemind/i.test(`${r.title} ${r.description}`);
+  reels = reels.filter(isBusiness);
   reels.sort((a, b) => (b.published || '').localeCompare(a.published || ''));
+  reels = reels.map((r) => ({ ...r, description: r.description.slice(0, 300) }));
   return NextResponse.json({ reels, source, channel: SITE.social.youtube });
 }
