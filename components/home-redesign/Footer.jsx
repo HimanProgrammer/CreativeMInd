@@ -43,7 +43,6 @@ export default function Footer() {
             <ul className="rd-footer-links">
               <li><a href="/page-about">About Us</a></li>
               <li><a href="/portfolio-gallery">Portfolio</a></li>
-              <li><a href="/reels">Reels</a></li>
               <li><a href="/blog-grid-3column">Blog</a></li>
               <li><a href="/page-contact">Career</a></li>
               <li><a href="/page-FAQ">FAQs</a></li>

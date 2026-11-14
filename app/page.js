@@ -48,7 +48,7 @@ export default function Home() {
         <Brands />
         <Services />
         <BestWork />
-        <Reels limit={8} />
+        <Reels />
         <WhyUs />
         <HowWeWork />
         <Stats />

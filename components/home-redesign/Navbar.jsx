@@ -33,7 +33,6 @@ export default function Navbar() {
       { href: '/service-branding', label: 'Branding & Identity' },
     ]},
     { href: '/portfolio-masonry', label: 'PORTFOLIO' },
-    { href: '/reels', label: 'REELS' },
     { href: '/blog-grid-3column', label: 'BLOG' },
     { href: '/page-contact', label: 'CONTACT' },
   ];

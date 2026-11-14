@@ -17,7 +17,6 @@ const ROUTES = [
   { path: 'service-ui-ux-design',    priority: 0.8, changeFrequency: 'monthly' },
   { path: 'service-branding',        priority: 0.8, changeFrequency: 'monthly' },
   { path: 'portfolio-masonry',       priority: 0.9, changeFrequency: 'weekly' },
-  { path: 'reels',                   priority: 0.8, changeFrequency: 'weekly' },
   { path: 'blog-grid-3column',       priority: 0.7, changeFrequency: 'weekly' },
   { path: 'page-team',               priority: 0.6, changeFrequency: 'monthly' },
   { path: 'page-contact',            priority: 0.7, changeFrequency: 'yearly' },
