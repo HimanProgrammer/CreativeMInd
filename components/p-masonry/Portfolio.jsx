@@ -44,7 +44,30 @@ export default function Portfolio() {
       if (signal) q = q.abortSignal(signal);
       const { data, error } = await q;
       if (error || !data) return;
-      const valid = data.filter(i =>
+
+      // YouTube Shorts from the Creative Mind channel (/api/reels) join the
+      // grid as video items, so they show under the existing "Videos" filter
+      // (and in "All"). Category stays empty so no extra chip is created.
+      let shorts = [];
+      try {
+        const r = await fetch('/api/reels', signal ? { signal } : undefined);
+        const j = await r.json();
+        const have = new Set(data.map(i => getYtId(i.video_url)).filter(Boolean));
+        shorts = (j.reels || [])
+          .filter(x => !have.has(x.id))
+          .map(x => ({
+            id: `yt-${x.id}`,
+            title: x.title,
+            category: null,
+            image_url: null,
+            thumbnail_url: x.thumb,
+            video_url: x.url,
+            website_url: null,
+            file_size: null,
+          }));
+      } catch { /* feed unavailable — show Supabase items only */ }
+
+      const valid = [...shorts, ...data].filter(i =>
         (i.image_url && i.image_url.startsWith('http')) ||
         (i.thumbnail_url && i.thumbnail_url.startsWith('http')) ||
         i.video_url || i.website_url

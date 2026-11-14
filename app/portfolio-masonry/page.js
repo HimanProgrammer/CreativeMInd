@@ -5,7 +5,6 @@ import Navbar from '@/components/home-redesign/Navbar';
 import Footer from '@/components/home-redesign/Footer';
 import Header from '@/components/p-masonry/Header';
 import Portfolio from '@/components/p-masonry/Portfolio';
-import Reels from '@/components/home-redesign/Reels';
 
 export const metadata = {
   title: 'Portfolio Masonry - CreativeMind IT Solutions',
@@ -27,7 +26,6 @@ export default function PortfolioMasonryPage() {
       <Navbar />
       <main>
         <Header />
-        <Reels />
         <Portfolio />
       </main>
       <Footer />
