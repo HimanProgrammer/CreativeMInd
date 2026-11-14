@@ -49,9 +49,11 @@ export default function Portfolio() {
       // grid as video items, so they show under the existing "Videos" filter
       // (and in "All"). Category stays empty so no extra chip is created.
       let shorts = [];
+      const shortIds = new Set();
       try {
         const r = await fetch('/api/reels', signal ? { signal } : undefined);
         const j = await r.json();
+        (j.reels || []).forEach(x => shortIds.add(x.id));
         const have = new Set(data.map(i => getYtId(i.video_url)).filter(Boolean));
         shorts = (j.reels || [])
           .filter(x => !have.has(x.id))
@@ -67,7 +69,21 @@ export default function Portfolio() {
           }));
       } catch { /* feed unavailable — show Supabase items only */ }
 
-      const valid = [...shorts, ...data].filter(i =>
+      // Reels/Shorts render 9:16 with the vertical thumbnail, however the link
+      // was saved (shorts/ or watch?v=).
+      const tag = (i) => {
+        const id = getYtId(i.video_url);
+        const short = Boolean(id) && (isShort(i.video_url) || shortIds.has(id));
+        if (!short) return i;
+        return {
+          ...i,
+          _short: true,
+          video_url: `https://www.youtube.com/shorts/${id}`,
+          thumbnail_url: `https://i.ytimg.com/vi/${id}/oardefault.jpg`,
+          image_url: null,
+        };
+      };
+      const valid = [...shorts, ...data].map(tag).filter(i =>
         (i.image_url && i.image_url.startsWith('http')) ||
         (i.thumbnail_url && i.thumbnail_url.startsWith('http')) ||
         i.video_url || i.website_url
@@ -277,7 +293,7 @@ export default function Portfolio() {
                     <img
                       src={hqUrl(item.image_url || item.thumbnail_url)}
                       alt={item.title || item.category || 'Portfolio'}
-                      style={isShort(item.video_url) ? S.pinImgShort : S.pinImg}
+                      style={item._short || isShort(item.video_url) ? S.pinImgShort : S.pinImg}
                       onError={e => {
                         const ytId = getYtId(item.video_url);
                         if (ytId) {
@@ -553,7 +569,7 @@ const S = {
   },
   pinImgShort: {
     width: '100%', aspectRatio: '9/16', display: 'block', borderRadius: 14,
-    objectFit: 'cover', objectPosition: 'center top',
+    objectFit: 'cover', objectPosition: 'center center',
     imageRendering: '-webkit-optimize-contrast',
   },
 
