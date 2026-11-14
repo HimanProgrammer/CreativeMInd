@@ -4,10 +4,13 @@ import { SITE } from '@/lib/siteConfig';
 
 const ORANGE = '#f05a28';
 
-// Homepage reels strip fed by /api/reels (latest uploads on the CreativeMind
+// Homepage reels grid fed by /api/reels (every Short on the CreativeMind
 // YouTube channel). Each card links to the Short on YouTube.
-export default function Reels({ limit = 15 }) {
+const FIRST = 10; // shown before "Show all"
+
+export default function Reels() {
   const [reels, setReels] = useState(null);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -20,7 +23,7 @@ export default function Reels({ limit = 15 }) {
 
   // Hide the section entirely if the channel has nothing to show.
   if (reels && reels.length === 0) return null;
-  const list = reels ? reels.slice(0, limit) : null;
+  const list = reels ? (showAll ? reels : reels.slice(0, FIRST)) : null;
 
   return (
     <section className="rd-section rd-reels">
@@ -55,6 +58,14 @@ export default function Reels({ limit = 15 }) {
                 </a>
               ))}
         </div>
+
+        {reels && reels.length > FIRST && (
+          <div className="rl-more">
+            <button type="button" className="rd-more-btn" onClick={() => setShowAll((v) => !v)}>
+              {showAll ? 'Show less' : `Show all ${reels.length} reels`} <span>{showAll ? '↑' : '↓'}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       <style>{`
@@ -96,6 +107,8 @@ export default function Reels({ limit = 15 }) {
           background-size: 220% 100%;
           animation: rlShimmer 1.4s linear infinite;
         }
+        .rd-reels .rl-more { text-align: center; margin-top: 30px; }
+        .rd-reels .rl-more button { background: none; border: 0; cursor: pointer; }
         @keyframes rlShimmer { to { background-position: -220% 0; } }
 
         @media (max-width: 992px) {

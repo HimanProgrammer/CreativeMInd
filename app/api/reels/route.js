@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { SITE } from '@/lib/siteConfig';
 
-// GET /api/reels — every video/short on the CreativeMind YouTube channel.
+// GET /api/reels — every YouTube Short on the CreativeMind channel.
 //
-// With YOUTUBE_API_KEY set (Vercel env), it walks the channel's whole uploads
-// playlist. Without it, it falls back to the public RSS feed, which needs no
-// key but only lists the newest 15 uploads. Either way the result is cached
+// With YOUTUBE_API_KEY set (Vercel env), it walks the channel's whole
+// Shorts playlist, so EVERY Short is listed. Without it, it falls back to the
+// public RSS feed, which needs no key but only lists the newest 15. Either way the result is cached
 // for an hour, so new uploads appear on the site within an hour.
 
 export const revalidate = 3600;
@@ -25,11 +25,14 @@ function shape({ id, title, published, description }) {
   };
 }
 
-async function fromApi(key) {
-  const uploads = 'UU' + CHANNEL_ID.slice(2);
+// UUSH… is YouTube's Shorts-only playlist for a channel; UU… is all uploads.
+const SHORTS_PLAYLIST = 'UUSH' + CHANNEL_ID.slice(2);
+const UPLOADS_PLAYLIST = 'UU' + CHANNEL_ID.slice(2);
+
+async function fromApi(key, uploads) {
   const out = [];
   let pageToken = '';
-  for (let page = 0; page < 10; page++) {
+  for (let page = 0; page < 40; page++) {
     const url = new URL('https://www.googleapis.com/youtube/v3/playlistItems');
     url.searchParams.set('part', 'snippet');
     url.searchParams.set('playlistId', uploads);
@@ -57,9 +60,9 @@ function decode(s = '') {
     .replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 }
 
-async function fromRss() {
+async function fromRss(query) {
   const res = await fetch(
-    `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`,
+    `https://www.youtube.com/feeds/videos.xml?${query}`,
     { next: { revalidate } }
   );
   if (!res.ok) throw new Error(`RSS ${res.status}`);
@@ -80,11 +83,19 @@ export async function GET() {
   let source = 'rss';
   try {
     const key = process.env.YOUTUBE_API_KEY;
+    // 1) API key set: every Short on the channel (all pages).
     if (key) {
-      try { reels = await fromApi(key); source = 'api'; }
-      catch { reels = await fromRss(); }
-    } else {
-      reels = await fromRss();
+      try { reels = await fromApi(key, SHORTS_PLAYLIST); source = 'api-shorts'; } catch {}
+      if (!reels.length) {
+        try { reels = await fromApi(key, UPLOADS_PLAYLIST); source = 'api-uploads'; } catch {}
+      }
+    }
+    // 2) No key: public feeds (YouTube caps these at the newest 15).
+    if (!reels.length) {
+      try { reels = await fromRss(`playlist_id=${SHORTS_PLAYLIST}`); source = 'rss-shorts'; } catch {}
+    }
+    if (!reels.length) {
+      reels = await fromRss(`channel_id=${CHANNEL_ID}`); source = 'rss';
     }
   } catch (err) {
     return NextResponse.json({ reels: [], source, error: err.message, channel: SITE.social.youtube });
