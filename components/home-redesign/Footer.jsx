@@ -17,6 +17,7 @@ export default function Footer() {
                   { icon: 'fab fa-twitter', href: SITE.social.twitter },
                   { icon: 'fab fa-linkedin-in', href: SITE.social.linkedin },
                   { icon: 'fab fa-instagram', href: SITE.social.instagram },
+                  { icon: 'fab fa-youtube', href: SITE.social.youtube },
                 ].filter((s) => s.href && s.href !== '#').map((s, i) => (
                   <a key={i} href={s.href} target="_blank" rel="noreferrer">
                     <i className={s.icon}></i>
@@ -42,6 +43,7 @@ export default function Footer() {
             <ul className="rd-footer-links">
               <li><a href="/page-about">About Us</a></li>
               <li><a href="/portfolio-gallery">Portfolio</a></li>
+              <li><a href="/reels">Reels</a></li>
               <li><a href="/blog-grid-3column">Blog</a></li>
               <li><a href="/page-contact">Career</a></li>
               <li><a href="/page-FAQ">FAQs</a></li>
