@@ -123,3 +123,14 @@ INSERT INTO site_settings (key, value) VALUES
   ('contact_email', 'hello@creativemind.com'),
   ('meta_description', 'CreativeMind IT Solutions — Web Dev, Mobile Apps, UI/UX Design, Branding & Digital Marketing.')
 ON CONFLICT (key) DO NOTHING;
+
+
+-- ── MEETNOTES (AI meeting notetaker, /meetnotes) ─────────────
+-- Already applied to the live project as migration "meetnotes_init".
+-- Tables: meetnotes_meetings (each user sees only their own rows) and
+-- meetnotes_usage (monthly recording seconds; plan = free | pro | business).
+-- Upgrade a customer after payment:
+--   UPDATE meetnotes_usage SET plan = 'pro'
+--   WHERE user_id = (SELECT id FROM auth.users WHERE email = 'client@example.com');
+-- Minute limits live in the function public.meetnotes_consume() and in
+-- lib/meetnotes/config.js — change both together.
